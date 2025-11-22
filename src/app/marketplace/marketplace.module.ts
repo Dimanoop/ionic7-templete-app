@@ -3,10 +3,12 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { MarketplaceRoutingModule } from './marketplace-routing.module';
 import { MarketplaceComponent } from './marketplace.component';
+import {ProductComponent} from "./product/product.component"
 
 @NgModule({
   declarations: [
-    MarketplaceComponent
+    MarketplaceComponent,
+    ProductComponent
   ],
   imports: [
     CommonModule,
