@@ -1,0 +1,92 @@
+.product-card {
+	--padding-start: 0.5rem;
+	--padding-end: 0.5rem;
+	cursor: pointer;
+	display: block;
+}
+
+.product-card .media {
+	position: relative;
+	height: 140px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--ion-color-light-shade);
+	border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+
+.product-card img {
+	max-height: 120px;
+	max-width: 100%;
+	object-fit: contain;
+}
+
+.product-card .no-image {
+	font-size: 40px;
+	opacity: 0.6;
+}
+
+.product-card .badge {
+	position: absolute;
+	left: 10px;
+	top: 10px;
+}
+
+.product-card ion-card-content {
+	padding-top: 12px;
+}
+
+.title-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.title-row .title {
+	margin: 0;
+	font-size: 1rem;
+	font-weight: 600;
+}
+
+.rating ion-icon {
+	color: #f3b015; /* star color */
+	font-size: 16px;
+}
+
+.price-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	margin-top: 8px;
+}
+
+.price .current {
+	font-weight: 700;
+	color: var(--ion-color-primary, #3880ff);
+}
+
+.price .old {
+	margin-left: 8px;
+	color: rgba(0,0,0,0.45);
+	text-decoration: line-through;
+	font-size: 0.9rem;
+}
+
+.actions {
+	display: flex;
+	gap: 8px;
+	margin-top: 12px;
+}
+
+.seller {
+	color: rgba(0,0,0,0.45);
+	font-size: 0.85rem;
+}
+
+.description {
+	color: rgba(0,0,0,0.65);
+	margin-top: 8px;
+	font-size: 0.9rem;
+	height: 2.6em;
+	overflow: hidden;
+}

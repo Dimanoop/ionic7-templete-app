@@ -22,6 +22,9 @@ describe('ShoppingListComponent', () => {
   });
 
   it('should add item with default status', () => {
+    // Ensure a category is selected so addItem will create an item
+    component.categories = [{ id: 1, name: 'Продукты' }];
+    component.selectedCategoryId = 1;
     component.newItemName = 'Молоко';
     component.addItem();
     expect(component.items.length).toBe(1);
@@ -30,8 +33,11 @@ describe('ShoppingListComponent', () => {
 
   it('should add new item at the beginning of array', () => {
     component.items = [
-      { id: 1, name: 'Хлеб', quantity: 1, status: 'не куплен' }
+      { id: 1, name: 'Хлеб', quantity: 1, status: 'не куплен', categoryId: 1 }
     ];
+    // Make sure we add into same category
+    component.categories = [{ id: 1, name: 'Продукты' }];
+    component.selectedCategoryId = 1;
     component.newItemName = 'Молоко';
     component.addItem();
     expect(component.items.length).toBe(2);
@@ -41,7 +47,7 @@ describe('ShoppingListComponent', () => {
 
   it('should change item status', () => {
     component.items = [
-      { id: 1, name: 'Хлеб', quantity: 1, status: 'не куплен' }
+      { id: 1, name: 'Хлеб', quantity: 1, status: 'не куплен', categoryId: 1 }
     ];
     component.changeStatus(1, 'куплен');
     expect(component.items[0].status).toBe('куплен');

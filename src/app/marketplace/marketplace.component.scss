@@ -1,0 +1,25 @@
+.market-header {
+	margin: 0 0 12px 0;
+
+	h2 {
+		margin: 0;
+		font-size: 1.25rem;
+	}
+
+	.subtitle {
+		margin: 4px 0 0 0;
+		color: rgba(0,0,0,0.6);
+		font-size: 0.95rem;
+	}
+}
+
+.product-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: 12px;
+}
+
+.product-grid app-product {
+	width: 100%;
+}
+

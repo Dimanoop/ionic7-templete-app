@@ -1,3 +1,37 @@
-<p>
-  product works!
-</p>
+<ion-card class="product-card" (click)="onViewDetails()" tabindex="0" role="button">
+	<div class="media">
+		<img *ngIf="product?.image; else noImage" [src]="product?.image" alt="{{product?.title}}"/>
+		<ng-template #noImage>
+			<div class="no-image">📦</div>
+		</ng-template>
+		<ion-badge *ngIf="product?.badge" color="primary" class="badge">{{product?.badge}}</ion-badge>
+	</div>
+
+	<ion-card-content>
+		<div class="title-row">
+			<h3 class="title">{{ product?.title }}</h3>
+			<div class="rating" *ngIf="product?.rating !== undefined">
+				<ng-container *ngFor="let i of [1,2,3,4,5]; let idx = index">
+					<ion-icon [name]="(product!.rating && product!.rating >= i) ? 'star' : (product!.rating && product!.rating > i-1 ? 'star-half' : 'star-outline')"></ion-icon>
+				</ng-container>
+				<small class="reviews">({{ product?.reviews || 0 }})</small>
+			</div>
+		</div>
+
+		<p class="description" *ngIf="product?.description">{{ product?.description }}</p>
+
+		<div class="price-row">
+			<div class="price">
+				<span class="current">{{ formatPrice(product?.price, product?.currency || '₽') }}</span>
+				<span class="old" *ngIf="product?.oldPrice">{{ formatPrice(product?.oldPrice, product?.currency || '₽') }}</span>
+			</div>
+			<div class="seller" *ngIf="product?.seller">{{ product?.seller }}</div>
+		</div>
+
+		<div class="actions" *ngIf="showActions">
+			<ion-button size="small" fill="outline" color="tertiary" (click)="$event.stopPropagation(); onViewDetails();">Подробнее</ion-button>
+			<ion-button size="small" color="primary" (click)="$event.stopPropagation(); onAddToCart();">В корзину</ion-button>
+		</div>
+	</ion-card-content>
+</ion-card>
+

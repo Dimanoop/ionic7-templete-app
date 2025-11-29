@@ -21,4 +21,12 @@ describe('ProductComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should emit addToCart when Add button clicked', () => {
+    component.product = { id: 1, title: 'Test', price: 1000 } as any;
+    spyOn(component.addToCart, 'emit');
+    const btn = fixture.nativeElement.querySelector('ion-button[color="primary"]');
+    btn.click();
+    expect(component.addToCart.emit).toHaveBeenCalled();
+  });
 });
