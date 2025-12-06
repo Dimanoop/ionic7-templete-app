@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Category, Product, FilterOptions, CartItem, Review } from '../models/marketplace.models';
 
 @Injectable({
@@ -18,13 +20,36 @@ export class MarketplaceService {
   private cart: CartItem[] = [];
   private recentlyViewed: Product[] = [];
   private favorites: Product[] = [];
+  private productsCache: any = null;
+  private categoriesCache: Category[] = [];
 
-  constructor() {
+  constructor(private http: HttpClient) {
     this.loadFromStorage();
+    this.loadProductsData();
+  }
+
+  private loadProductsData(): void {
+    this.http.get('/assets/sample-data/marketplace/products.json').subscribe(
+      (data: any) => {
+        this.productsCache = data;
+        this.categoriesCache = data.categories || [];
+      },
+      (error) => {
+        console.error('Error loading products data:', error);
+      }
+    );
   }
 
   // ===== CATEGORIES =====
   getCategories(): Category[] {
+    if (this.categoriesCache.length > 0) {
+      return this.categoriesCache;
+    }
+    // Fallback to default categories if not loaded yet
+    return this.getDefaultCategories();
+  }
+
+  private getDefaultCategories(): Category[] {
     return [
       {
         id: 'electronics',
@@ -198,6 +223,27 @@ export class MarketplaceService {
 
   // ===== PRODUCTS =====
   getProductsByCategory(categoryId: string, filters?: FilterOptions): Observable<Product[]> {
+    // Загружаем товары из кеша
+    if (this.productsCache && this.productsCache.products) {
+      let products = this.productsCache.products.filter((p: Product) => p.categoryId === categoryId);
+      
+      // Если товаров мало, добавляем сгенерированные
+      if (products.length < 10) {
+        products = [...products, ...this.generateMockProducts(categoryId, 30 - products.length)];
+      }
+
+      let filtered = products;
+      if (filters) {
+        filtered = this.applyFilters(products, filters);
+      }
+
+      return new Observable(observer => {
+        observer.next(filtered);
+        observer.complete();
+      });
+    }
+
+    // Fallback: использовать сгенерированные товары
     const products = this.generateMockProducts(categoryId, 30);
     let filtered = products;
 
@@ -476,6 +522,10 @@ export class MarketplaceService {
     this.favorites = this.favorites.filter(p => p.id !== productId);
     this.favoriteSubject.next([...this.favorites]);
     this.saveToStorage();
+  }
+
+  getFavorites(): Observable<Product[]> {
+    return this.favorites$;
   }
 
   isFavorite(productId: string | number): boolean {

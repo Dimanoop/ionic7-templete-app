@@ -15,6 +15,7 @@ register();
 })
 export class AppComponent {
   public appPages = [
+    {title: 'Маркетплейс', url: '/marketplace', icon: 'cart'},
     {title: 'MAP.YANDEXMAPS', url: '/maps', icon: ''},
     { title: 'FrontPage', url: '/front-layout', icon: 'front-layout' },
     { title: 'Settings', url: '/settings', icon: '' },

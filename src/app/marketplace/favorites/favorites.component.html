@@ -1,63 +1,25 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
+      <ion-back-button (click)="goBack()" text=""></ion-back-button>
     </ion-buttons>
-    <ion-title>Маркетплейс</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="openCart()">
-        <ion-icon slot="icon-only" name="cart" color="light"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-  
-  <!-- Search Bar -->
-  <ion-toolbar class="search-toolbar">
-    <ion-searchbar 
-      [(ngModel)]="searchQuery"
-      (ionChange)="onSearch($event)"
-      placeholder="Поиск товаров..."
-      debounce="500"
-      clearIcon="close"
-    ></ion-searchbar>
+    <ion-title>Избранное</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <!-- Hero Banner -->
-  <div class="hero-banner">
-    <div class="hero-content">
-      <h1>Маркетплейс</h1>
-      <p>Найди лучшие предложения и новинки</p>
-      <ion-button expand="block" color="light" (click)="scrollToProducts()">
-        Смотреть все товары
-      </ion-button>
-    </div>
+<ion-content class="favorites-content">
+  <div *ngIf="favoriteProducts.length === 0" class="empty-favorites">
+    <ion-icon name="heart-outline" color="medium" size="large"></ion-icon>
+    <p>Нет избранных товаров</p>
+    <ion-button color="primary" (click)="goBack()">
+      Найти товары
+    </ion-button>
   </div>
 
-  <!-- Categories Quick Access -->
-  <div class="categories-section">
-    <h2>Категории</h2>
-    <div class="categories-scroll">
-      <div class="categories-container">
-        <div class="category-card" (click)="selectCategory(category)" *ngFor="let category of categories">
-          <ion-icon [name]="category.icon" size="large" color="primary"></ion-icon>
-          <span>{{ category.name }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Featured Products Section -->
-  <div class="featured-section">
-    <div class="section-header">
-      <h2>Популярные товары</h2>
-      <ion-button fill="clear" size="small">Все</ion-button>
-    </div>
-    
+  <div *ngIf="favoriteProducts.length > 0" class="favorites-grid">
     <ion-grid fixed="true">
       <ion-row>
-        <ion-col size="12" sizeMd="6" sizeLg="4" *ngFor="let product of filteredProducts; let i = index" [ngClass]="{'full-width': i === 0}">
+        <ion-col size="12" sizeMd="6" sizeLg="4" *ngFor="let product of favoriteProducts">
           <ion-card class="product-card" (click)="viewProductDetails(product)">
             <div class="product-image-wrapper">
               <img 
@@ -82,11 +44,11 @@
               <ion-button 
                 fill="clear" 
                 class="favorite-btn"
-                (click)="toggleFavorite(product, $event)"
+                (click)="removeFromFavorites(product, $event)"
               >
                 <ion-icon 
                   slot="icon-only"
-                  [name]="isFavorite(product.id.toString()) ? 'heart' : 'heart-outline'"
+                  name="heart"
                   color="danger"
                   size="large"
                 ></ion-icon>
@@ -99,21 +61,21 @@
               <!-- Rating -->
               <div class="rating-info" *ngIf="product.rating !== undefined">
                 <div class="stars">
-                  <ng-container *ngFor="let i of [1,2,3,4,5]">
+                  <ng-container *ngFor="let star of getStarArray(product.rating)">
                     <ion-icon
-                      *ngIf="i <= Math!.floor(product.rating!)"
+                      *ngIf="star === 'star'"
                       name="star"
                       color="warning"
                       size="small"
                     ></ion-icon>
                     <ion-icon
-                      *ngIf="i > Math!.floor(product.rating!) && i - 1 < product.rating!"
+                      *ngIf="star === 'half'"
                       name="star-half"
                       color="warning"
                       size="small"
                     ></ion-icon>
                     <ion-icon
-                      *ngIf="i > Math!.ceil(product.rating!)"
+                      *ngIf="star === 'outline'"
                       name="star-outline"
                       color="medium"
                       size="small"
@@ -153,17 +115,5 @@
         </ion-col>
       </ion-row>
     </ion-grid>
-  </div>
-
-  <!-- Load More Button -->
-  <div class="load-more-section">
-    <ion-button 
-      expand="block" 
-      fill="outline"
-      (click)="loadMoreProducts()"
-      *ngIf="filteredProducts.length < totalProducts"
-    >
-      Загрузить ещё
-    </ion-button>
   </div>
 </ion-content>

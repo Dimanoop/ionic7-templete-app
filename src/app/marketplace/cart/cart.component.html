@@ -1,0 +1,90 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button (click)="goBack()" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Корзина</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="cart-content">
+  <div *ngIf="cartItems.length === 0" class="empty-cart">
+    <ion-icon name="cart-outline" color="medium" size="large"></ion-icon>
+    <p>Ваша корзина пуста</p>
+    <ion-button color="primary" (click)="goBack()">
+      Вернуться к покупкам
+    </ion-button>
+  </div>
+
+  <div *ngIf="cartItems.length > 0">
+    <!-- Cart Items -->
+    <ion-list class="cart-items">
+      <ion-item-sliding *ngFor="let item of cartItems" class="cart-item">
+        <ion-item>
+          <div class="item-content">
+            <div class="item-image">
+              <img [src]="item.product.image" [alt]="item.product.title"/>
+            </div>
+            <div class="item-details">
+              <h3 class="item-title">{{ item.product.title }}</h3>
+              <p class="item-price">{{ formatPrice(item.product.price) }}</p>
+              
+              <!-- Quantity Controls -->
+              <div class="quantity-control">
+                <ion-button size="small" fill="outline" (click)="decreaseQuantity(item)">
+                  <ion-icon name="remove" slot="icon-only"></ion-icon>
+                </ion-button>
+                <span class="quantity">{{ item.quantity }}</span>
+                <ion-button size="small" fill="outline" (click)="increaseQuantity(item)">
+                  <ion-icon name="add" slot="icon-only"></ion-icon>
+                </ion-button>
+              </div>
+            </div>
+            <div class="item-total">
+              <p class="total-price">{{ formatPrice(item.product.price * item.quantity) }}</p>
+            </div>
+          </div>
+        </ion-item>
+
+        <!-- Delete Option -->
+        <ion-item-options side="end">
+          <ion-item-option color="danger" (click)="removeFromCart(item.product.id)">
+            <ion-icon slot="start" name="trash"></ion-icon>
+            Удалить
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+
+    <!-- Cart Summary -->
+    <div class="cart-summary">
+      <div class="summary-row">
+        <span>Количество товаров:</span>
+        <span>{{ cartItems.length }}</span>
+      </div>
+      <div class="summary-row">
+        <span>Сумма товаров:</span>
+        <span>{{ formatPrice(totalPrice) }}</span>
+      </div>
+      <div class="summary-row delivery">
+        <span>Доставка:</span>
+        <span>Бесплатно</span>
+      </div>
+      <div class="summary-row total">
+        <span>Итого:</span>
+        <span>{{ formatPrice(totalPrice) }}</span>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="cart-actions">
+      <ion-button expand="block" fill="outline" color="medium" (click)="clearCart()">
+        Очистить корзину
+      </ion-button>
+      <ion-button expand="block" color="primary" (click)="checkout()">
+        <ion-icon slot="start" name="flash"></ion-icon>
+        Оформить заказ
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

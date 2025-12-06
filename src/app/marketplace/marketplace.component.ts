@@ -87,7 +87,12 @@ export class MarketplaceComponent implements OnInit {
 
   toggleFavorite(product: Product, event: Event) {
     event.stopPropagation();
-    this.marketplaceService.addToFavorites(product);
+    const isCurrentlyFavorite = this.marketplaceService.isFavorite(product.id.toString());
+    if (isCurrentlyFavorite) {
+      this.marketplaceService.removeFromFavorites(product.id);
+    } else {
+      this.marketplaceService.addToFavorites(product);
+    }
   }
 
   isFavorite(productId: string): boolean {
@@ -109,5 +114,13 @@ export class MarketplaceComponent implements OnInit {
 
   scrollToProducts() {
     this.content?.scrollToPoint(0, 400, 500);
+  }
+
+  openCart() {
+    this.router.navigate(['/marketplace/cart']);
+  }
+
+  openFavorites() {
+    this.router.navigate(['/marketplace/favorites']);
   }
 }
