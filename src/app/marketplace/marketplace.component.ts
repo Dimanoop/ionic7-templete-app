@@ -20,6 +20,7 @@ export class MarketplaceComponent implements OnInit {
   totalProducts: number = 0;
   currentPage: number = 1;
   pageSize: number = 12;
+  cartQuantities: { [productId: string]: number } = {};
 
   constructor(
     private marketplaceService: MarketplaceService,
@@ -29,6 +30,13 @@ export class MarketplaceComponent implements OnInit {
   ngOnInit() {
     this.loadCategories();
     this.loadProducts();
+    this.marketplaceService.cart$.subscribe(items => {
+      const map: { [key: string]: number } = {};
+      items.forEach(i => {
+        map[i.product.id.toString()] = i.quantity;
+      });
+      this.cartQuantities = map;
+    });
   }
 
   loadCategories() {
@@ -40,10 +48,19 @@ export class MarketplaceComponent implements OnInit {
     const allProducts: Product[] = [];
     const categoriesIds = ['electronics', 'clothes', 'home', 'beauty', 'kids', 'food'];
     let loadedCount = 0;
+    let productIndex = 0;
+    const baseId = Date.now();
 
     categoriesIds.forEach(catId => {
       this.marketplaceService.getProductsByCategory(catId).subscribe(products => {
-        allProducts.push(...products.slice(0, 2));
+        // Берём первые 2 товара из каждой категории и обеспечиваем уникальные ID
+        products.slice(0, 2).forEach(product => {
+          const uniqueProduct = { ...product };
+          // Добавляем уникальный ID на основе временной метки и индекса
+          uniqueProduct.id = `${baseId}-${productIndex}`;
+          productIndex++;
+          allProducts.push(uniqueProduct);
+        });
         loadedCount++;
         if (loadedCount === categoriesIds.length) {
           this.products = allProducts;
@@ -102,6 +119,20 @@ export class MarketplaceComponent implements OnInit {
   addToCart(product: Product, event: Event) {
     event.stopPropagation();
     this.marketplaceService.addToCart(product, 1);
+  }
+
+  incrementQuantity(product: Product, event: Event) {
+    event.stopPropagation();
+    this.marketplaceService.changeCartItemQuantity(product.id, 1);
+  }
+
+  decrementQuantity(product: Product, event: Event) {
+    event.stopPropagation();
+    this.marketplaceService.changeCartItemQuantity(product.id, -1);
+  }
+
+  getQuantity(product: Product): number {
+    return this.cartQuantities[product.id.toString()] || 0;
   }
 
   formatPrice(price: number): string {

@@ -138,16 +138,29 @@
             </ion-card-content>
 
             <div class="card-footer">
-              <ion-button 
-                expand="block" 
-                size="small"
-                color="primary"
-                [disabled]="!product.inStock"
-                (click)="addToCart(product, $event)"
-              >
-                <ion-icon slot="start" name="cart-outline"></ion-icon>
-                В корзину
-              </ion-button>
+              <ng-container *ngIf="getQuantity(product) > 0; else addBtn">
+                <div class="qty-controls">
+                  <ion-button size="small" fill="clear" (click)="decrementQuantity(product, $event)">
+                    <ion-icon name="remove-circle-outline"></ion-icon>
+                  </ion-button>
+                  <div class="qty-value">{{ getQuantity(product) }}</div>
+                  <ion-button size="small" fill="clear" (click)="incrementQuantity(product, $event)">
+                    <ion-icon name="add-circle-outline"></ion-icon>
+                  </ion-button>
+                </div>
+              </ng-container>
+              <ng-template #addBtn>
+                <ion-button 
+                  expand="block" 
+                  size="small"
+                  color="primary"
+                  [disabled]="!product.inStock"
+                  (click)="addToCart(product, $event)"
+                >
+                  <ion-icon slot="start" name="cart-outline"></ion-icon>
+                  В корзину
+                </ion-button>
+              </ng-template>
             </div>
           </ion-card>
         </ion-col>

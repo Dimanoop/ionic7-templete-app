@@ -505,6 +505,24 @@ export class MarketplaceService {
     this.saveToStorage();
   }
 
+  changeCartItemQuantity(productId: string | number, delta: number): void {
+    const item = this.cart.find(i => i.product.id === productId);
+    if (item) {
+      item.quantity += delta;
+      if (item.quantity <= 0) {
+        this.removeFromCart(productId);
+      } else {
+        this.cartSubject.next([...this.cart]);
+        this.saveToStorage();
+      }
+    }
+  }
+
+  getCartItemQuantity(productId: string | number): number {
+    const item = this.cart.find(i => i.product.id === productId);
+    return item ? item.quantity : 0;
+  }
+
   getCartItems(): CartItem[] {
     return [...this.cart];
   }

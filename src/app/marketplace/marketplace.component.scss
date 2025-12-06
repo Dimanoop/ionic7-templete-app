@@ -298,6 +298,30 @@
       margin: 0;
       font-weight: 600;
     }
+
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      ion-button {
+        --padding-start: 0;
+        --padding-end: 0;
+        min-width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .qty-value {
+        min-width: 28px;
+        text-align: center;
+        font-weight: 700;
+        font-size: 0.95rem;
+      }
+    }
   }
 }
 
