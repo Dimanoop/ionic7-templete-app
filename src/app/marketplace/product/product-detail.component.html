@@ -134,7 +134,7 @@
       </div>
 
       <!-- Size Selection -->
-      <div class="option-group" *ngIf="product.sizes && product.sizes.length > 0">
+      <div class="option-group" *ngIf="showSizeOptions()">
         <label class="option-label">Размер:</label>
         <div class="size-options">
           <button
@@ -178,6 +178,13 @@
   </ion-card>
 
   <!-- Specifications Section -->
+  <!-- Highlight top specs for certain categories (e.g., electronics) -->
+  <div class="top-specs" *ngIf="topSpecs().length > 0">
+    <div class="spec-chip" *ngFor="let s of topSpecs()">
+      <strong>{{ s.name }}:</strong>&nbsp;<span>{{ s.value }}</span>
+    </div>
+  </div>
+
   <ion-card class="specs-card" *ngIf="product.specifications && product.specifications.length > 0">
     <ion-card-header>
       <ion-card-title>Характеристики</ion-card-title>

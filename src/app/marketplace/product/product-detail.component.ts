@@ -53,7 +53,12 @@ export class ProductDetailComponent implements OnInit {
   initializeProductDetails() {
     if (!this.product) return;
     this.selectedColor = this.product.colors?.[0] || '';
-    this.selectedSize = this.product.sizes?.[0] || '';
+    // Only auto-select size for categories that actually use size options (clothes, shoes, kids)
+    if (this.showSizeOptions()) {
+      this.selectedSize = this.product.sizes?.[0] || '';
+    } else {
+      this.selectedSize = '';
+    }
     this.checkFavorite();
   }
 
@@ -75,10 +80,13 @@ export class ProductDetailComponent implements OnInit {
 
   addToCart() {
     if (this.product) {
-      this.marketplaceService.addToCart(this.product, this.quantity, {
-        color: this.selectedColor,
-        size: this.selectedSize
-      });
+      // For categories like electronics we don't pass size as a clothing size
+      const payload: any = { color: this.selectedColor };
+      if (this.showSizeOptions() && this.selectedSize) {
+        payload.size = this.selectedSize;
+      }
+
+      this.marketplaceService.addToCart(this.product, this.quantity, payload);
       console.log('Added to cart:', {
         product: this.product,
         quantity: this.quantity,
@@ -86,6 +94,32 @@ export class ProductDetailComponent implements OnInit {
         size: this.selectedSize,
       });
     }
+  }
+
+  // Return true if sizes are meaningful for this product (clothing, shoes, etc.)
+  showSizeOptions(): boolean {
+    if (!this.product) return false;
+    const categoriesWithSizes = ['clothes', 'shoes', 'kids'];
+    return !!(this.product.sizes && this.product.sizes.length > 0 && categoriesWithSizes.includes(this.product.categoryId));
+  }
+
+  // For certain categories (electronics) return top specs to highlight
+  topSpecs(): { name: string; value: string }[] {
+    if (!this.product || !this.product.specifications) return [];
+    if (this.product.categoryId === 'electronics') {
+      const keys = ['Процессор', 'ОЗУ', 'ОЗУ (RAM)', 'Оперативная память', 'Память', 'ПЗУ', 'Накопитель', 'Дисплей', 'Хранение', 'Объём памяти'];
+      return this.product.specifications.filter(s => keys.includes(s.name)).slice(0, 3);
+    }
+    // For other categories we could prioritize other spec names (e.g., Материал for clothes)
+    if (this.product.categoryId === 'clothes') {
+      const keys = ['Материал', 'Размер', 'Плотность'];
+      return this.product.specifications.filter(s => keys.includes(s.name)).slice(0, 3);
+    }
+    return [];
+  }
+
+  getSpecValue(name: string): string | undefined {
+    return this.product?.specifications?.find(s => s.name === name)?.value;
   }
 
   buyNow() {

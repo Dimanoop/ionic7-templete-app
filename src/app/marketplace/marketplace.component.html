@@ -89,7 +89,7 @@
               >
                 <ion-icon 
                   slot="icon-only"
-                  [name]="isFavorite(product.id.toString()) ? 'heart' : 'heart-outline'"
+                  [name]="isFavorite(product.id) ? 'heart' : 'heart-outline'"
                   color="danger"
                   size="large"
                 ></ion-icon>
@@ -98,6 +98,9 @@
 
             <ion-card-content>
               <h3 class="product-title">{{ product.title }}</h3>
+              <div class="quick-specs" *ngIf="getElectronicsTopSpecs(product).length > 0">
+                <span class="spec" *ngFor="let s of getElectronicsTopSpecs(product)">{{ s.name }}: {{ s.value }}</span>
+              </div>
               
               <!-- Rating -->
               <div class="rating-info" *ngIf="product.rating !== undefined">

@@ -162,7 +162,7 @@ export class ProductsListComponent implements OnInit {
     this.marketplaceService.addToFavorites(product);
   }
 
-  isFavorite(productId: string): boolean {
+  isFavorite(productId: any): boolean {
     return this.marketplaceService.isFavorite(productId);
   }
 
@@ -170,8 +170,20 @@ export class ProductsListComponent implements OnInit {
     this.marketplaceService.addToCart(product, quantity);
   }
 
+  // Helper to get a specification value by name
+  getSpecValue(product: Product, name: string): string | undefined {
+    return product.specifications?.find(s => s.name === name)?.value;
+  }
+
+  // Return top specs for electronics (processor, RAM, storage)
+  getElectronicsTopSpecs(product: Product): { name: string; value: string }[] {
+    if (!product || !product.specifications || product.categoryId !== 'electronics') return [];
+    const keys = ['Процессор', 'ОЗУ', 'ОЗУ (RAM)', 'Оперативная память', 'Память', 'ПЗУ', 'Накопитель', 'Хранение', 'Объём памяти'];
+    return product.specifications.filter(s => keys.includes(s.name)).slice(0, 2);
+  }
+
   getQuantity(product: Product): number {
-    return this.cartQuantities[product.id] || 0;
+    return this.cartQuantities[String(product.id)] || 0;
   }
 
   incrementQuantity(product: Product, $event?: Event) {

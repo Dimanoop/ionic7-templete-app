@@ -6,6 +6,23 @@
   }
 }
 
+.top-specs {
+  display: flex;
+  gap: 8px;
+  margin: 8px 16px 0 16px;
+
+  .spec-chip {
+    background: rgba(0,0,0,0.03);
+    padding: 6px 10px;
+    border-radius: 18px;
+    font-size: 13px;
+    color: #444;
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+  }
+}
+
 // Image Gallery
 .image-gallery {
   background: white;

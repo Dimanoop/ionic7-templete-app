@@ -28,8 +28,16 @@ export class MarketplaceComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.loadCategories();
-    this.loadProducts();
+    // Ensure products.json is reloaded from disk (useful after editing sample data)
+    this.marketplaceService.reloadProducts().subscribe(() => {
+      this.loadCategories();
+      this.loadProducts();
+    }, (err) => {
+      // If reload fails, fall back to existing data
+      console.warn('Failed to reload products.json, using cached data', err);
+      this.loadCategories();
+      this.loadProducts();
+    });
     this.marketplaceService.cart$.subscribe(items => {
       const map: { [key: string]: number } = {};
       items.forEach(i => {
@@ -48,27 +56,35 @@ export class MarketplaceComponent implements OnInit {
     const allProducts: Product[] = [];
     const categoriesIds = ['electronics', 'clothes', 'home', 'beauty', 'kids', 'food'];
     let loadedCount = 0;
-    let productIndex = 0;
-    const baseId = Date.now();
-
     categoriesIds.forEach(catId => {
-      this.marketplaceService.getProductsByCategory(catId).subscribe(products => {
-        // Берём первые 2 товара из каждой категории и обеспечиваем уникальные ID
-        products.slice(0, 2).forEach(product => {
-          const uniqueProduct = { ...product };
-          // Добавляем уникальный ID на основе временной метки и индекса
-          uniqueProduct.id = `${baseId}-${productIndex}`;
-          productIndex++;
-          allProducts.push(uniqueProduct);
+      // Request only real products for the main page (do not include generated mock items)
+      // Do not limit here — show all real cached products from each category on the main page
+      this.marketplaceService.getProductsByCategory(catId, undefined, { includeMock: false }).subscribe(products => {
+        // Добавляем все реальные товары из этой категории
+        products.forEach(product => {
+          const copy = { ...product };
+          allProducts.push(copy);
         });
         loadedCount++;
         if (loadedCount === categoriesIds.length) {
-          this.products = allProducts;
-          this.filteredProducts = allProducts;
-          this.totalProducts = allProducts.length;
+          // Randomize order of real products on main page
+          const shuffled = this.shuffleArray(allProducts);
+          this.products = shuffled;
+          this.filteredProducts = shuffled;
+          this.totalProducts = shuffled.length;
         }
       });
     });
+  }
+
+  // Fisher-Yates shuffle
+  private shuffleArray<T>(arr: T[]): T[] {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
   }
 
   loadMoreProducts() {
@@ -104,7 +120,7 @@ export class MarketplaceComponent implements OnInit {
 
   toggleFavorite(product: Product, event: Event) {
     event.stopPropagation();
-    const isCurrentlyFavorite = this.marketplaceService.isFavorite(product.id.toString());
+    const isCurrentlyFavorite = this.marketplaceService.isFavorite(product.id);
     if (isCurrentlyFavorite) {
       this.marketplaceService.removeFromFavorites(product.id);
     } else {
@@ -112,7 +128,7 @@ export class MarketplaceComponent implements OnInit {
     }
   }
 
-  isFavorite(productId: string): boolean {
+  isFavorite(productId: string | number): boolean {
     return this.marketplaceService.isFavorite(productId);
   }
 
@@ -133,6 +149,13 @@ export class MarketplaceComponent implements OnInit {
 
   getQuantity(product: Product): number {
     return this.cartQuantities[product.id.toString()] || 0;
+  }
+
+  // Helper to get top specs for electronics on the main page
+  getElectronicsTopSpecs(product: Product): { name: string; value: string }[] {
+    if (!product || !product.specifications || product.categoryId !== 'electronics') return [];
+    const keys = ['Процессор', 'ОЗУ', 'Память', 'ПЗУ', 'Накопитель', 'Хранение', 'Объём памяти'];
+    return product.specifications.filter(s => keys.includes(s.name)).slice(0, 2);
   }
 
   formatPrice(price: number): string {

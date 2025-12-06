@@ -22,21 +22,61 @@ export class MarketplaceService {
   private favorites: Product[] = [];
   private productsCache: any = null;
   private categoriesCache: Category[] = [];
+  private idCounter: number = 1;
+  private idMap: { [originalId: string]: number } = {};
 
   constructor(private http: HttpClient) {
     this.loadFromStorage();
     this.loadProductsData();
   }
 
+  private processLoadedData(data: any): void {
+    // If the JSON already contains numeric ids, keep them and set idCounter after max id.
+    const rawProducts: any[] = (data.products || []);
+    const allNumeric = rawProducts.every(p => typeof p.id === 'number');
+    if (allNumeric) {
+      const products = rawProducts;
+      const maxId = products.reduce((m, p) => Math.max(m, Number(p.id)), 0);
+      this.idCounter = Math.max(this.idCounter, maxId + 1);
+      // clear idMap because ids are stable numeric now
+      this.idMap = {};
+      this.productsCache = { ...data, products };
+      this.categoriesCache = data.categories || [];
+    } else {
+      // Assign numeric ids to loaded products to ensure unique incremental ids
+      const products = rawProducts.map((p: any) => {
+        const originalId = p.id != null ? String(p.id) : `gen-${this.idCounter}`;
+        const newId = this.idCounter++;
+        this.idMap[originalId] = newId;
+        return { ...p, id: newId };
+      });
+      this.productsCache = { ...data, products };
+      this.categoriesCache = data.categories || [];
+    }
+  }
+
   private loadProductsData(): void {
     this.http.get('/assets/sample-data/marketplace/products.json').subscribe(
       (data: any) => {
-        this.productsCache = data;
-        this.categoriesCache = data.categories || [];
+        try {
+          this.processLoadedData(data);
+        } catch (e) {
+          console.error('Error processing products data:', e);
+        }
       },
       (error) => {
         console.error('Error loading products data:', error);
       }
+    );
+  }
+
+  // Public method to reload products at runtime and return an observable that completes when done
+  public reloadProducts(): Observable<void> {
+    return this.http.get('/assets/sample-data/marketplace/products.json').pipe(
+      map((data: any) => {
+        this.processLoadedData(data);
+        return;
+      })
     );
   }
 
@@ -222,12 +262,23 @@ export class MarketplaceService {
   }
 
   // ===== PRODUCTS =====
-  getProductsByCategory(categoryId: string, filters?: FilterOptions): Observable<Product[]> {
+  getProductsByCategory(categoryId: string, filters?: FilterOptions, options?: { includeMock?: boolean; limit?: number }): Observable<Product[]> {
     // Загружаем товары из кеша
     if (this.productsCache && this.productsCache.products) {
       let products = this.productsCache.products.filter((p: Product) => p.categoryId === categoryId);
-      
-      // Если товаров мало, добавляем сгенерированные
+
+      // If caller requested not to include mock items, return cached products only
+      if (options && options.includeMock === false) {
+        if (options.limit && products.length > options.limit) {
+          products = products.slice(0, options.limit);
+        }
+        return new Observable(observer => {
+          observer.next(products);
+          observer.complete();
+        });
+      }
+
+      // Если товаров мало, добавляем сгенерированные (legacy behavior)
       if (products.length < 10) {
         products = [...products, ...this.generateMockProducts(categoryId, 30 - products.length)];
       }
@@ -259,7 +310,28 @@ export class MarketplaceService {
 
   getProductById(productId: string | number): Observable<Product | undefined> {
     return new Observable(observer => {
-      // Simulate API call
+        // Try to resolve id mapping if productId refers to original (string) id
+        const requested = String(productId);
+        // If products cache exists try to find by numeric id or by original id mapping
+        if (this.productsCache && this.productsCache.products) {
+          // Try numeric match
+          const numeric = Number(productId);
+          let found = this.productsCache.products.find((p: Product) => p.id === numeric);
+          if (!found) {
+            // Try mapped original id
+            const mapped = this.idMap[requested];
+            if (mapped) {
+              found = this.productsCache.products.find((p: Product) => p.id === mapped);
+            }
+          }
+          if (found) {
+            observer.next(found);
+            observer.complete();
+            return;
+          }
+        }
+
+      // Симулируем API вызов — возвращаем сгенерированный товар как fallback
       setTimeout(() => {
         const product = this.generateMockProduct(productId);
         observer.next(product);
@@ -274,8 +346,9 @@ export class MarketplaceService {
     const badges = ['Хит', 'New', 'Акция', 'Популярное'];
 
     for (let i = 0; i < count; i++) {
+      const id = this.idCounter++;
       products.push({
-        id: `${categoryId}-${i}`,
+        id,
         title: `${this.getCategoryName(categoryId)} №${i + 1}`,
         description: 'Высокое качество, отличные отзывы покупателей',
         longDescription: 'Это полное описание товара с подробной информацией о характеристиках, преимуществах и применении. Товар прошел проверку качества и готов к доставке.',
@@ -295,7 +368,7 @@ export class MarketplaceService {
         sellerRating: Math.round((Math.random() * 1 + 4) * 10) / 10,
         categoryId: categoryId,
         colors: ['Чёрный', 'Белый', 'Синий', 'Красный'],
-        sizes: ['S', 'M', 'L', 'XL'],
+        sizes: (['clothes', 'shoes', 'kids'].includes(categoryId)) ? ['S', 'M', 'L', 'XL'] : [],
         inStock: Math.random() > 0.2,
         brand: brands[Math.floor(Math.random() * brands.length)],
         specifications: [
@@ -351,7 +424,7 @@ export class MarketplaceService {
       sellerRating: 4.8,
       categoryId: 'electronics',
       colors: ['Чёрный', 'Белый', 'Синий'],
-      sizes: ['S', 'M', 'L', 'XL'],
+      sizes: [],
       inStock: true,
       brand: 'Samsung',
       specifications: [
@@ -483,9 +556,12 @@ export class MarketplaceService {
   }
 
   // ===== CART =====
+  private normalizeId(id: string | number): string {
+    return String(id);
+  }
   addToCart(product: Product, quantity: number = 1, variant?: any): void {
     const existingItem = this.cart.find(
-      item => item.product.id === product.id && 
+      item => this.normalizeId(item.product.id) === this.normalizeId(product.id) &&
                JSON.stringify(item.selectedVariant) === JSON.stringify(variant)
     );
 
@@ -500,13 +576,13 @@ export class MarketplaceService {
   }
 
   removeFromCart(productId: string | number): void {
-    this.cart = this.cart.filter(item => item.product.id !== productId);
+    this.cart = this.cart.filter(item => this.normalizeId(item.product.id) !== this.normalizeId(productId));
     this.cartSubject.next([...this.cart]);
     this.saveToStorage();
   }
 
   changeCartItemQuantity(productId: string | number, delta: number): void {
-    const item = this.cart.find(i => i.product.id === productId);
+    const item = this.cart.find(i => this.normalizeId(i.product.id) === this.normalizeId(productId));
     if (item) {
       item.quantity += delta;
       if (item.quantity <= 0) {
@@ -519,7 +595,7 @@ export class MarketplaceService {
   }
 
   getCartItemQuantity(productId: string | number): number {
-    const item = this.cart.find(i => i.product.id === productId);
+    const item = this.cart.find(i => this.normalizeId(i.product.id) === this.normalizeId(productId));
     return item ? item.quantity : 0;
   }
 
@@ -539,7 +615,7 @@ export class MarketplaceService {
   }
 
   removeFromFavorites(productId: string | number): void {
-    this.favorites = this.favorites.filter(p => p.id !== productId);
+    this.favorites = this.favorites.filter(p => this.normalizeId(p.id) !== this.normalizeId(productId));
     this.favoriteSubject.next([...this.favorites]);
     this.saveToStorage();
   }
@@ -549,12 +625,12 @@ export class MarketplaceService {
   }
 
   isFavorite(productId: string | number): boolean {
-    return this.favorites.some(p => p.id === productId);
+    return this.favorites.some(p => this.normalizeId(p.id) === this.normalizeId(productId));
   }
 
   // ===== RECENTLY VIEWED =====
   addToRecentlyViewed(product: Product): void {
-    this.recentlyViewed = this.recentlyViewed.filter(p => p.id !== product.id);
+    this.recentlyViewed = this.recentlyViewed.filter(p => this.normalizeId(p.id) !== this.normalizeId(product.id));
     this.recentlyViewed.unshift(product);
     if (this.recentlyViewed.length > 20) {
       this.recentlyViewed.pop();
