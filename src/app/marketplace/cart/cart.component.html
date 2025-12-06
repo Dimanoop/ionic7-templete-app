@@ -31,11 +31,11 @@
               
               <!-- Quantity Controls -->
               <div class="quantity-control">
-                <ion-button size="small" fill="outline" (click)="decreaseQuantity(item)">
+                <ion-button size="small" fill="outline" (click)="decreaseQuantity(item, $event)">
                   <ion-icon name="remove" slot="icon-only"></ion-icon>
                 </ion-button>
                 <span class="quantity">{{ item.quantity }}</span>
-                <ion-button size="small" fill="outline" (click)="increaseQuantity(item)">
+                <ion-button size="small" fill="outline" (click)="increaseQuantity(item, $event)">
                   <ion-icon name="add" slot="icon-only"></ion-icon>
                 </ion-button>
               </div>

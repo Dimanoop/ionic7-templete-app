@@ -39,16 +39,18 @@ export class CartComponent implements OnInit {
     this.loadCart();
   }
 
-  increaseQuantity(item: CartItem) {
-    item.quantity++;
-    this.calculateTotal();
+  increaseQuantity(item: CartItem, $event?: Event) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.marketplaceService.changeCartItemQuantity(item.product.id, 1);
   }
 
-  decreaseQuantity(item: CartItem) {
-    if (item.quantity > 1) {
-      item.quantity--;
-      this.calculateTotal();
+  decreaseQuantity(item: CartItem, $event?: Event) {
+    if ($event) {
+      $event.stopPropagation();
     }
+    this.marketplaceService.changeCartItemQuantity(item.product.id, -1);
   }
 
   clearCart() {
