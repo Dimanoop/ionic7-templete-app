@@ -1,0 +1,67 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Категории</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="categories-content">
+  <!-- Main Categories Grid -->
+  <div class="categories-grid">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6" *ngFor="let category of categories" class="category-col">
+          <div 
+            class="category-card"
+            (click)="selectCategory(category)"
+            (mouseenter)="selectCategory(category)"
+          >
+            <div class="category-icon-bg">
+              <ion-icon [name]="category.icon" class="category-icon"></ion-icon>
+            </div>
+            <h3 class="category-name">{{ category.name }}</h3>
+            <p class="category-count">{{ category.productCount | number: '1.0-0' }} товаров</p>
+            <ion-icon name="chevron-forward-outline" class="chevron"></ion-icon>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+  <!-- Subcategories Popover -->
+  <div class="subcategories-overlay" *ngIf="showSubcategories" [@slideIn]>
+    <div class="subcategories-container">
+      <div class="subcategories-header">
+        <h2>{{ selectedCategory?.name }}</h2>
+        <ion-button fill="clear" (click)="closeSubcategories()">
+          <ion-icon slot="icon-only" name="close"></ion-icon>
+        </ion-button>
+      </div>
+
+      <div class="subcategories-list">
+        <!-- All Products -->
+        <button 
+          class="subcategory-item all-products"
+          (click)="navigateToProducts(selectedCategory!.id)"
+        >
+          <ion-icon name="apps-outline"></ion-icon>
+          <span>Все товары</span>
+          <span class="count">{{ selectedCategory?.productCount }}</span>
+        </button>
+
+        <!-- Subcategories -->
+        <button 
+          *ngFor="let subcategory of selectedCategory?.subcategories"
+          class="subcategory-item"
+          (click)="navigateToSubcategoryProducts(subcategory.id)"
+        >
+          <ion-icon [name]="subcategory.icon"></ion-icon>
+          <div class="subcategory-info">
+            <span class="subcategory-name">{{ subcategory.name }}</span>
+            <span class="subcategory-count">{{ subcategory.productCount | number: '1.0-0' }}</span>
+          </div>
+          <ion-icon name="chevron-forward-outline" class="chevron"></ion-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</ion-content>

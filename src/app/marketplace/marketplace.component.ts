@@ -1,67 +1,113 @@
-import { Component, OnInit } from '@angular/core';
-import { Product } from './product/product.component';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { IonContent } from '@ionic/angular';
+import { MarketplaceService } from './services/marketplace.service';
+import { Product, Category } from './models/marketplace.models';
 
 @Component({
   selector: 'app-marketplace',
   templateUrl: './marketplace.component.html',
   styleUrls: ['./marketplace.component.scss'],
 })
-export class MarketplaceComponent  implements OnInit {
+export class MarketplaceComponent implements OnInit {
+  @ViewChild(IonContent) content!: IonContent;
 
+  Math = Math; // Для использования в шаблоне
   products: Product[] = [];
+  filteredProducts: Product[] = [];
+  categories: Category[] = [];
+  searchQuery: string = '';
+  totalProducts: number = 0;
+  currentPage: number = 1;
+  pageSize: number = 12;
 
-  constructor() {
-    // Mock data for the marketplace start page
-    this.products = [
-      {
-        id: 1,
-        title: 'Беспроводные наушники A7',
-        description: 'Активное шумоподавление, 30 часов работы, USB-C',
-        price: 4990,
-        oldPrice: 6990,
-        currency: '₽',
-        rating: 4.5,
-        reviews: 124,
-        image: '/assets/img/headphones.jpg',
-        badge: 'Хит',
-        seller: 'AudioStore'
-      },
-      {
-        id: 2,
-        title: 'Умные часы X10',
-        description: 'Измерение пульса, GPS, водозащита 5ATM',
-        price: 9990,
-        currency: '₽',
-        rating: 4.2,
-        reviews: 87,
-        image: '/assets/img/watch.jpg',
-        badge: 'New',
-        seller: 'TimeTech'
-      },
-      {
-        id: 3,
-        title: 'Портативный зарядный 20000 mAh',
-        description: 'Быстрая зарядка, два USB выхода',
-        price: 2590,
-        currency: '₽',
-        rating: 4.8,
-        reviews: 40,
-        image: '/assets/img/powerbank.jpg',
-        seller: 'PowerHouse'
-      }
-    ];
+  constructor(
+    private marketplaceService: MarketplaceService,
+    private router: Router
+  ) {}
+
+  ngOnInit() {
+    this.loadCategories();
+    this.loadProducts();
   }
 
-  ngOnInit() {}
-
-  onAddToCart(product: Product) {
-    // TODO: wire with cart service — for now show console log
-    console.log('Добавлено в корзину:', product);
+  loadCategories() {
+    this.categories = this.marketplaceService.getCategories().slice(0, 6);
   }
 
-  onViewDetails(product: Product) {
-    // TODO: navigate to product detail view
-    console.log('Показать детали для:', product);
+  loadProducts() {
+    // Загружаем товары из разных категорий для главной страницы
+    const allProducts: Product[] = [];
+    const categoriesIds = ['electronics', 'clothes', 'home', 'beauty', 'kids', 'food'];
+    let loadedCount = 0;
+
+    categoriesIds.forEach(catId => {
+      this.marketplaceService.getProductsByCategory(catId).subscribe(products => {
+        allProducts.push(...products.slice(0, 2));
+        loadedCount++;
+        if (loadedCount === categoriesIds.length) {
+          this.products = allProducts;
+          this.filteredProducts = allProducts;
+          this.totalProducts = allProducts.length;
+        }
+      });
+    });
   }
 
+  loadMoreProducts() {
+    this.currentPage++;
+    const newProducts = this.products.slice(
+      (this.currentPage - 1) * this.pageSize,
+      this.currentPage * this.pageSize
+    );
+    this.filteredProducts = [...this.filteredProducts, ...newProducts];
+  }
+
+  onSearch(event: any) {
+    if (!this.searchQuery) {
+      this.filteredProducts = this.products;
+      return;
+    }
+
+    const query = this.searchQuery.toLowerCase();
+    this.filteredProducts = this.products.filter(product =>
+      product.title.toLowerCase().includes(query) ||
+      (product.description?.toLowerCase().includes(query) ?? false)
+    );
+  }
+
+  selectCategory(category: Category) {
+    this.router.navigate(['/marketplace/products', category.id]);
+  }
+
+  viewProductDetails(product: Product) {
+    this.marketplaceService.addToRecentlyViewed(product);
+    this.router.navigate(['/marketplace/product', product.id]);
+  }
+
+  toggleFavorite(product: Product, event: Event) {
+    event.stopPropagation();
+    this.marketplaceService.addToFavorites(product);
+  }
+
+  isFavorite(productId: string): boolean {
+    return this.marketplaceService.isFavorite(productId);
+  }
+
+  addToCart(product: Product, event: Event) {
+    event.stopPropagation();
+    this.marketplaceService.addToCart(product, 1);
+  }
+
+  formatPrice(price: number): string {
+    return new Intl.NumberFormat('ru-RU', {
+      style: 'currency',
+      currency: 'RUB',
+      maximumFractionDigits: 0
+    }).format(price);
+  }
+
+  scrollToProducts() {
+    this.content?.scrollToPoint(0, 400, 500);
+  }
 }

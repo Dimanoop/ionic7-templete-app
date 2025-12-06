@@ -1,0 +1,262 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/marketplace"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Товары</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="cart-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <!-- Sorting Segment -->
+  <ion-toolbar class="sort-toolbar">
+    <ion-segment (ionChange)="onSortChange($event)" [value]="sortBy" class="sort-segment">
+      <ion-segment-button value="popularity" layout="icon-bottom">
+        <ion-icon name="flame-outline"></ion-icon>
+        <ion-label>Популярные</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="priceLow" layout="icon-bottom">
+        <ion-icon name="arrow-up-outline"></ion-icon>
+        <ion-label>Дешевле</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="rating" layout="icon-bottom">
+        <ion-icon name="star-outline"></ion-icon>
+        <ion-label>Рейтинг</ion-label>
+      </ion-segment-button>
+      <ion-segment-button (click)="showFilters = !showFilters" layout="icon-bottom">
+        <ion-icon name="filter-outline"></ion-icon>
+        <ion-label>Фильтры</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content class="products-list-content" [fullscreen]="false">
+  <!-- Filters Panel -->
+  <div class="filters-panel" *ngIf="showFilters" [@slideDown]>
+    <div class="filters-container">
+      <div class="filter-header">
+        <h3>Фильтры</h3>
+        <ion-button fill="clear" (click)="resetFilters()">
+          <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+        </ion-button>
+      </div>
+
+      <!-- Price Filter -->
+      <div class="filter-group">
+        <h4>Цена</h4>
+        <div class="price-inputs">
+          <ion-input 
+            type="number" 
+            placeholder="От"
+            [(ngModel)]="priceRange.from"
+            (ionChange)="applyFilters()"
+            class="price-input">
+          </ion-input>
+          <span class="price-separator">—</span>
+          <ion-input 
+            type="number" 
+            placeholder="До"
+            [(ngModel)]="priceRange.to"
+            (ionChange)="applyFilters()"
+            class="price-input">
+          </ion-input>
+        </div>
+      </div>
+
+      <!-- Brand Filter -->
+      <div class="filter-group">
+        <h4>Бренд</h4>
+        <div class="brands-list">
+          <ion-checkbox 
+            *ngFor="let brand of brands"
+            [checked]="selectedBrands.includes(brand)"
+            (ionChange)="toggleBrand(brand)"
+            class="brand-checkbox"
+          >
+            {{ brand }}
+          </ion-checkbox>
+        </div>
+      </div>
+
+      <!-- Rating Filter -->
+      <div class="filter-group">
+        <h4>Рейтинг</h4>
+        <div class="rating-options">
+          <ion-item *ngFor="let rating of [5, 4, 3, 2, 1]" lines="none">
+            <ion-label>
+              <ng-container *ngFor="let i of [1,2,3,4,5]">
+                <ion-icon 
+                  *ngIf="i <= rating"
+                  name="star"
+                  color="warning"
+                  size="small"
+                ></ion-icon>
+              </ng-container>
+            </ion-label>
+            <ion-radio slot="start" [value]="rating" (ionChange)="minRating = rating; applyFilters()"></ion-radio>
+          </ion-item>
+        </div>
+      </div>
+
+      <!-- In Stock Filter -->
+      <div class="filter-group">
+        <ion-item lines="none">
+          <ion-label>Только в наличии</ion-label>
+          <ion-checkbox 
+            slot="start"
+            [(ngModel)]="inStockOnly"
+            (ionChange)="applyFilters()"
+          ></ion-checkbox>
+        </ion-item>
+      </div>
+
+      <ion-button 
+        expand="block" 
+        (click)="showFilters = false"
+        class="apply-filters-btn"
+      >
+        Применить ({{ filteredProducts.length }})
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Products Grid -->
+  <div class="products-grid">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6" *ngFor="let product of filteredProducts" class="product-col">
+          <div 
+            class="product-card"
+            (click)="viewProductDetails(product)"
+          >
+            <!-- Image Container -->
+            <div class="product-image-container">
+              <img 
+                *ngIf="product.image" 
+                [src]="product.image" 
+                [alt]="product.title"
+                class="product-image"
+              />
+              <div class="image-overlay" *ngIf="!product.inStock">
+                <span>Нет в наличии</span>
+              </div>
+
+              <!-- Badge -->
+              <ion-badge 
+                *ngIf="product.badge" 
+                color="danger"
+                class="product-badge"
+              >
+                {{ product.badge }}
+              </ion-badge>
+
+              <!-- Favorite Button -->
+              <ion-button 
+                fill="clear" 
+                class="favorite-btn"
+                (click)="addToFavorites(product, $event)"
+              >
+                <ion-icon 
+                  slot="icon-only"
+                  [name]="isFavorite(product.id.toString()) ? 'heart' : 'heart-outline'"
+                  color="danger"
+                ></ion-icon>
+              </ion-button>
+
+              <!-- Discount Badge -->
+              <div class="discount-badge" *ngIf="product.discount && product.discount > 0">
+                -{{ product.discount }}%
+              </div>
+            </div>
+
+            <!-- Product Info -->
+            <div class="product-info">
+              <!-- Title -->
+              <h3 class="product-title">{{ product.title }}</h3>
+
+              <!-- Rating -->
+              <div class="rating-info" *ngIf="product.rating !== undefined">
+                <div class="stars">
+                  <ng-container *ngFor="let i of [1,2,3,4,5]">
+                    <ion-icon
+                      *ngIf="i <= Math!.floor(product.rating!)"
+                      name="star"
+                      color="warning"
+                      size="small"
+                    ></ion-icon>
+                    <ion-icon
+                      *ngIf="i > Math!.floor(product.rating!) && i - 1 < product.rating!"
+                      name="star-half"
+                      color="warning"
+                      size="small"
+                    ></ion-icon>
+                    <ion-icon
+                      *ngIf="i > Math!.ceil(product.rating!)"
+                      name="star-outline"
+                      color="medium"
+                      size="small"
+                    ></ion-icon>
+                  </ng-container>
+                </div>
+                <span class="reviews-count">({{ product.reviews || 0 }})</span>
+              </div>
+
+              <!-- Price -->
+              <div class="price-section">
+                <span class="current-price">{{ product.price | currency: '': '' }} ₽</span>
+                <span class="old-price" *ngIf="product.oldPrice">
+                  {{ product.oldPrice | currency: '': '' }} ₽
+                </span>
+              </div>
+
+              <!-- Seller Info -->
+              <div class="seller-info" *ngIf="product.seller">
+                <small>{{ product.seller }}</small>
+              </div>
+
+              <!-- Add to Cart Button -->
+              <ion-button 
+                expand="block" 
+                size="small"
+                color="primary"
+                (click)="$event.stopPropagation(); addToCart(product, 1)"
+              >
+                <ion-icon slot="start" name="cart-outline"></ion-icon>
+                В корзину
+              </ion-button>
+            </div>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+  <!-- Loading -->
+  <ion-spinner *ngIf="isLoading" class="loading-spinner"></ion-spinner>
+
+  <!-- No Products -->
+  <div class="no-products" *ngIf="!isLoading && filteredProducts.length === 0">
+    <ion-icon name="sad-outline"></ion-icon>
+    <p>Товары не найдены</p>
+    <p class="hint">Попробуйте изменить фильтры</p>
+  </div>
+
+  <!-- Infinite Scroll -->
+  <ion-infinite-scroll (ionInfinite)="onLoadMore($event)">
+    <ion-infinite-scroll-content
+      loadingSpinner="crescent"
+      loadingText="Загрузка...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>
+
+<!-- FAB Button to Top -->
+<ion-fab *ngIf="filteredProducts.length > 0" vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab-button (click)="scrollToTop()" color="primary">
+    <ion-icon name="arrow-up-outline"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

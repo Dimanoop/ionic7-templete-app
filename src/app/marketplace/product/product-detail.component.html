@@ -1,0 +1,335 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button (click)="goBack()" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Товар</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="toggleFavorite()">
+        <ion-icon 
+          slot="icon-only" 
+          [name]="isFavorite ? 'heart' : 'heart-outline'"
+          color="danger"
+        ></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="product-detail" *ngIf="product">
+  <!-- Product Images Gallery -->
+  <div class="image-gallery">
+    <div class="main-image">
+      <img 
+        [src]="product.images?.[currentImageIndex] || product.image" 
+        [alt]="product.title"
+        class="product-image"
+      />
+      <ion-badge 
+        *ngIf="product.badge" 
+        color="danger"
+        class="badge"
+      >
+        {{ product.badge }}
+      </ion-badge>
+      <ion-badge 
+        *ngIf="product.discount && product.discount > 0" 
+        color="warning"
+        class="discount-badge"
+      >
+        -{{ product.discount }}%
+      </ion-badge>
+    </div>
+
+    <!-- Image Thumbnails -->
+    <div class="image-thumbnails" *ngIf="product.images && product.images.length > 1">
+      <button 
+        *ngFor="let img of product.images; let i = index"
+        class="thumbnail"
+        [class.active]="currentImageIndex === i"
+        (click)="selectImage(i)"
+      >
+        <img [src]="img" [alt]="'Image ' + i"/>
+      </button>
+    </div>
+  </div>
+
+  <!-- Product Info Header -->
+  <div class="product-header">
+    <h1 class="title">{{ product.title }}</h1>
+
+    <!-- Seller Info -->
+    <div class="seller-info" *ngIf="product.seller">
+      <ion-icon name="storefront-outline" color="medium"></ion-icon>
+      <span>{{ product.seller }}</span>
+      <span class="seller-rating" *ngIf="product.sellerRating">
+        ⭐ {{ product.sellerRating }}
+      </span>
+    </div>
+
+    <!-- Rating & Reviews -->
+    <div class="rating-section" *ngIf="product.rating !== undefined">
+      <div class="stars">
+        <ng-container *ngFor="let star of getStarArray(product.rating)">
+          <ion-icon
+            *ngIf="star === 'star'"
+            name="star"
+            color="warning"
+          ></ion-icon>
+          <ion-icon
+            *ngIf="star === 'half'"
+            name="star-half"
+            color="warning"
+          ></ion-icon>
+          <ion-icon
+            *ngIf="star === 'outline'"
+            name="star-outline"
+            color="medium"
+          ></ion-icon>
+        </ng-container>
+      </div>
+      <span class="rating-value">{{ product.rating }}</span>
+      <span class="reviews-count">({{ product.reviews || 0 }} отзывов)</span>
+    </div>
+
+    <!-- Price -->
+    <div class="price-section">
+      <span class="current-price">
+        {{ formatPrice(product.price) }}
+      </span>
+      <span class="old-price" *ngIf="product.oldPrice">
+        {{ formatPrice(product.oldPrice) }}
+      </span>
+    </div>
+
+    <!-- Stock Status -->
+    <div class="stock-status" [class.out-of-stock]="!product.inStock">
+      <ion-icon [name]="product.inStock ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+      {{ product.inStock ? 'В наличии' : 'Нет в наличии' }}
+    </div>
+  </div>
+
+  <!-- Options Section -->
+  <ion-card class="options-card">
+    <ion-card-header>
+      <ion-card-title>Параметры товара</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <!-- Color Selection -->
+      <div class="option-group" *ngIf="product.colors && product.colors.length > 0">
+        <label class="option-label">Цвет:</label>
+        <div class="color-options">
+          <button
+            *ngFor="let color of product.colors"
+            class="color-btn"
+            [class.active]="selectedColor === color"
+            (click)="selectedColor = color"
+          >
+            {{ color }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Size Selection -->
+      <div class="option-group" *ngIf="product.sizes && product.sizes.length > 0">
+        <label class="option-label">Размер:</label>
+        <div class="size-options">
+          <button
+            *ngFor="let size of product.sizes"
+            class="size-btn"
+            [class.active]="selectedSize === size"
+            (click)="selectedSize = size"
+          >
+            {{ size }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Quantity Selection -->
+      <div class="option-group">
+        <label class="option-label">Количество:</label>
+        <div class="quantity-control">
+          <ion-button
+            size="small"
+            fill="outline"
+            (click)="decreaseQuantity()"
+          >
+            <ion-icon slot="icon-only" name="remove"></ion-icon>
+          </ion-button>
+          <input
+            type="number"
+            class="quantity-input"
+            [(ngModel)]="quantity"
+            min="1"
+          />
+          <ion-button
+            size="small"
+            fill="outline"
+            (click)="increaseQuantity()"
+          >
+            <ion-icon slot="icon-only" name="add"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Specifications Section -->
+  <ion-card class="specs-card" *ngIf="product.specifications && product.specifications.length > 0">
+    <ion-card-header>
+      <ion-card-title>Характеристики</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="specifications">
+        <div
+          class="spec-item"
+          *ngFor="let spec of product.specifications"
+        >
+          <span class="spec-name">{{ spec.name }}</span>
+          <span class="spec-value">{{ spec.value }}</span>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Description -->
+  <ion-card class="description-card" *ngIf="product.longDescription">
+    <ion-card-header>
+      <ion-card-title>Описание</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p class="description-text">{{ product.longDescription }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Reviews Section -->
+  <ion-card class="reviews-card" *ngIf="product.reviewsList && product.reviewsList.length > 0">
+    <ion-card-header>
+      <ion-card-title>Отзывы покупателей</ion-card-title>
+      <div class="avg-rating">
+        <div class="rating-stars">
+          <ng-container *ngFor="let star of getStarArray(getAverageRating())">
+            <ion-icon
+              *ngIf="star === 'star'"
+              name="star"
+              color="warning"
+            ></ion-icon>
+            <ion-icon
+              *ngIf="star === 'half'"
+              name="star-half"
+              color="warning"
+            ></ion-icon>
+            <ion-icon
+              *ngIf="star === 'outline'"
+              name="star-outline"
+              color="medium"
+            ></ion-icon>
+          </ng-container>
+        </div>
+        <span class="avg-rating-value">{{ getAverageRating() }}</span>
+      </div>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="reviews-list">
+        <div class="review-item" *ngFor="let review of product.reviewsList">
+          <div class="review-header">
+            <div class="reviewer-info">
+              <span class="avatar">{{ review.avatar }}</span>
+              <div>
+                <h4 class="reviewer-name">{{ review.author }}</h4>
+                <span class="review-date">{{ review.date | date: 'dd.MM.yyyy' }}</span>
+              </div>
+            </div>
+            <div class="review-rating">
+              <ng-container *ngFor="let star of getStarArray(review.rating)">
+                <ion-icon
+                  *ngIf="star === 'star'"
+                  name="star"
+                  color="warning"
+                  size="small"
+                ></ion-icon>
+                <ion-icon
+                  *ngIf="star === 'half'"
+                  name="star-half"
+                  color="warning"
+                  size="small"
+                ></ion-icon>
+                <ion-icon
+                  *ngIf="star === 'outline'"
+                  name="star-outline"
+                  color="medium"
+                  size="small"
+                ></ion-icon>
+              </ng-container>
+            </div>
+          </div>
+          <p class="review-text">{{ review.text }}</p>
+          <div class="review-footer" *ngIf="review.helpful !== undefined || review.notHelpful !== undefined">
+            <span class="helpful">👍 {{ review.helpful }}</span>
+            <span class="not-helpful">👎 {{ review.notHelpful }}</span>
+          </div>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Delivery Info -->
+  <ion-card class="delivery-card">
+    <ion-card-header>
+      <ion-card-title>Доставка и оплата</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="delivery-info">
+        <div class="delivery-item">
+          <ion-icon name="car-outline" color="primary"></ion-icon>
+          <div>
+            <h5>Быстрая доставка</h5>
+            <p *ngIf="product.delivery">
+              {{ product.delivery.days }} день доставки
+              <span *ngIf="product.delivery.free" class="free-delivery">бесплатно</span>
+            </p>
+          </div>
+        </div>
+        <div class="delivery-item">
+          <ion-icon name="shield-checkmark-outline" color="success"></ion-icon>
+          <div>
+            <h5>Гарантия качества</h5>
+            <p>100% оригинальный товар</p>
+          </div>
+        </div>
+        <div class="delivery-item">
+          <ion-icon name="swap-outline" color="tertiary"></ion-icon>
+          <div>
+            <h5>Возврат</h5>
+            <p>Возврат в течение 30 дней</p>
+          </div>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
+
+<!-- Action Buttons -->
+<ion-footer>
+  <div class="action-buttons">
+    <ion-button
+      expand="block"
+      fill="outline"
+      color="primary"
+      (click)="addToCart()"
+      [disabled]="!product?.inStock"
+    >
+      <ion-icon slot="start" name="cart-outline"></ion-icon>
+      В корзину
+    </ion-button>
+    <ion-button
+      expand="block"
+      color="primary"
+      (click)="buyNow()"
+      [disabled]="!product?.inStock"
+    >
+      <ion-icon slot="start" name="flash"></ion-icon>
+      Купить сейчас
+    </ion-button>
+  </div>
+</ion-footer>

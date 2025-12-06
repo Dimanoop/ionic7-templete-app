@@ -1,7 +1,10 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { MarketplaceComponent } from './marketplace.component';
-import {ProductComponent} from "./product/product.component"
+import { ProductComponent } from "./product/product.component"
+import { CategoriesComponent } from './categories/categories.component';
+import { ProductsListComponent } from './products-list/products-list.component';
+import { ProductDetailComponent } from './product/product-detail.component';
 
 const routes: Routes = [
   {
@@ -9,10 +12,21 @@ const routes: Routes = [
     component: MarketplaceComponent
   },
   {
-    path:"product",
+    path: 'categories',
+    component: CategoriesComponent
+  },
+  {
+    path: 'products/:id',
+    component: ProductsListComponent
+  },
+  {
+    path: 'product/:id',
+    component: ProductDetailComponent
+  },
+  {
+    path: 'product',
     component: ProductComponent
   }
-  
 ];
 
 @NgModule({

@@ -1,0 +1,14 @@
+<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="beauty-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fa709a;stop-opacity:0.1" />
+      <stop offset="100%" style="stop-color:#fee140;stop-opacity:0.1" />
+    </linearGradient>
+  </defs>
+  <rect width="300" height="300" fill="url(#beauty-grad)"/>
+  <circle cx="150" cy="110" r="35" fill="#fee140" opacity="0.5"/>
+  <circle cx="130" cy="95" r="8" fill="#fa709a" opacity="0.7"/>
+  <circle cx="170" cy="95" r="8" fill="#fa709a" opacity="0.7"/>
+  <path d="M 140 130 Q 150 140 160 130" stroke="#fa709a" stroke-width="2" fill="none" opacity="0.6"/>
+  <text x="150" y="270" font-size="14" fill="#fa709a" text-anchor="middle" font-family="Arial" font-weight="bold">Красота</text>
+</svg>

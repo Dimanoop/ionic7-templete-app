@@ -1,0 +1,13 @@
+<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="home-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4facfe;stop-opacity:0.1" />
+      <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:0.1" />
+    </linearGradient>
+  </defs>
+  <rect width="300" height="300" fill="url(#home-grad)"/>
+  <path d="M 150 80 L 240 140 L 230 200 L 70 200 L 60 140 Z" fill="#4facfe" opacity="0.5"/>
+  <rect x="100" y="150" width="40" height="50" fill="#00f2fe" opacity="0.6"/>
+  <rect x="160" y="150" width="40" height="50" fill="#00f2fe" opacity="0.6"/>
+  <text x="150" y="270" font-size="14" fill="#00f2fe" text-anchor="middle" font-family="Arial" font-weight="bold">Дом и сад</text>
+</svg>

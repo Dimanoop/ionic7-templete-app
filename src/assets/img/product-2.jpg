@@ -1,0 +1,13 @@
+<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="clothes-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f093fb;stop-opacity:0.1" />
+      <stop offset="100%" style="stop-color:#f5576c;stop-opacity:0.1" />
+    </linearGradient>
+  </defs>
+  <rect width="300" height="300" fill="url(#clothes-grad)"/>
+  <path d="M 150 50 L 100 100 L 90 200 L 210 200 L 200 100 Z" fill="#f5576c" opacity="0.5"/>
+  <circle cx="130" cy="90" r="12" fill="#f093fb" opacity="0.6"/>
+  <circle cx="170" cy="90" r="12" fill="#f093fb" opacity="0.6"/>
+  <text x="150" y="270" font-size="14" fill="#f5576c" text-anchor="middle" font-family="Arial" font-weight="bold">Одежда</text>
+</svg>
