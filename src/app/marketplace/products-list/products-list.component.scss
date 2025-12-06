@@ -328,6 +328,31 @@
       margin-right: 4px;
     }
   }
+
+  .qty-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: auto;
+
+    ion-button {
+      min-width: 36px;
+      height: 36px;
+      margin: 0;
+      --padding-start: 0;
+      --padding-end: 0;
+      --padding-top: 0;
+      --padding-bottom: 0;
+    }
+
+    .qty-value {
+      min-width: 28px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+  }
 }
 
 // Loading and Empty States

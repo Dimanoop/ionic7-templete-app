@@ -20,6 +20,7 @@ export class ProductsListComponent implements OnInit {
   categoryName: string = '';
   isLoading = false;
   showFilters = false;
+  cartQuantities: { [productId: string]: number } = {};
 
   // Filter options
   sortBy: string = 'popularity';
@@ -54,6 +55,14 @@ export class ProductsListComponent implements OnInit {
     this.route.params.subscribe(params => {
       this.categoryId = params['id'];
       this.loadProducts();
+    });
+    
+    // Subscribe to cart to track quantities
+    this.marketplaceService.cart$.subscribe(cart => {
+      this.cartQuantities = {};
+      cart.forEach(item => {
+        this.cartQuantities[item.product.id] = item.quantity;
+      });
     });
   }
 
@@ -153,6 +162,28 @@ export class ProductsListComponent implements OnInit {
 
   addToCart(product: Product, quantity: number) {
     this.marketplaceService.addToCart(product, quantity);
+  }
+
+  getQuantity(product: Product): number {
+    return this.cartQuantities[product.id] || 0;
+  }
+
+  incrementQuantity(product: Product, $event?: Event) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.marketplaceService.changeCartItemQuantity(product.id, 1);
+  }
+
+  decrementQuantity(product: Product, $event?: Event) {
+    if ($event) {
+      $event.stopPropagation();
+    }
+    this.marketplaceService.changeCartItemQuantity(product.id, -1);
+  }
+
+  goToCart() {
+    this.router.navigate(['/marketplace/cart']);
   }
 
   scrollToTop() {

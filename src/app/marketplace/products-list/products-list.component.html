@@ -5,7 +5,7 @@
     </ion-buttons>
     <ion-title>Товары</ion-title>
     <ion-buttons slot="end">
-      <ion-button>
+      <ion-button (click)="goToCart()">
         <ion-icon slot="icon-only" name="cart-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -218,16 +218,37 @@
                 <small>{{ product.seller }}</small>
               </div>
 
-              <!-- Add to Cart Button -->
-              <ion-button 
-                expand="block" 
-                size="small"
-                color="primary"
-                (click)="$event.stopPropagation(); addToCart(product, 1)"
-              >
-                <ion-icon slot="start" name="cart-outline"></ion-icon>
-                В корзину
-              </ion-button>
+              <!-- Add to Cart Button or Quantity Controls -->
+              <div *ngIf="getQuantity(product) > 0; else addBtn">
+                <div class="qty-controls">
+                  <ion-button 
+                    size="small" 
+                    fill="outline"
+                    (click)="decrementQuantity(product, $event)"
+                  >
+                    <ion-icon name="remove" slot="icon-only"></ion-icon>
+                  </ion-button>
+                  <span class="qty-value">{{ getQuantity(product) }}</span>
+                  <ion-button 
+                    size="small" 
+                    fill="outline"
+                    (click)="incrementQuantity(product, $event)"
+                  >
+                    <ion-icon name="add" slot="icon-only"></ion-icon>
+                  </ion-button>
+                </div>
+              </div>
+              <ng-template #addBtn>
+                <ion-button 
+                  expand="block" 
+                  size="small"
+                  color="primary"
+                  (click)="$event.stopPropagation(); addToCart(product, 1)"
+                >
+                  <ion-icon slot="start" name="cart-outline"></ion-icon>
+                  В корзину
+                </ion-button>
+              </ng-template>
             </div>
           </div>
         </ion-col>
