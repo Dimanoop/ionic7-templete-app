@@ -107,6 +107,10 @@ export class ProductDetailComponent implements OnInit {
     this.router.navigate(['/marketplace']);
   }
 
+  goToCart() {
+    this.router.navigate(['/marketplace/cart']);
+  }
+
   formatPrice(p: number | undefined, currency = '₽'): string {
     if (p == null) return '';
     return `${p.toLocaleString('ru-RU')} ${currency}`;

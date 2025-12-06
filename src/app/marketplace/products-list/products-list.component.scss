@@ -220,12 +220,13 @@
 
   .favorite-btn {
     position: absolute;
-    top: 8px;
-    left: 8px;
+    top: 30px;
+    right: 8px;
     --padding-start: 0;
     --padding-end: 0;
     width: 36px;
     height: 36px;
+    z-index: 10;
 
     ion-icon {
       width: 20px;

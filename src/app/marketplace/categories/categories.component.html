@@ -1,6 +1,17 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/marketplace"></ion-back-button>
+    </ion-buttons>
     <ion-title>Категории</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="goToFavorites()">
+        <ion-icon slot="icon-only" name="heart"></ion-icon>
+      </ion-button>
+      <ion-button (click)="goToCart()">
+        <ion-icon slot="icon-only" name="cart"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 

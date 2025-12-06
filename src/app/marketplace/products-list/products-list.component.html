@@ -5,6 +5,9 @@
     </ion-buttons>
     <ion-title>Товары</ion-title>
     <ion-buttons slot="end">
+      <ion-button (click)="goToFavorites()">
+        <ion-icon slot="icon-only" name="heart"></ion-icon>
+      </ion-button>
       <ion-button (click)="goToCart()">
         <ion-icon slot="icon-only" name="cart-outline"></ion-icon>
       </ion-button>

@@ -529,7 +529,9 @@ export class MarketplaceService {
 
   // ===== FAVORITES =====
   addToFavorites(product: Product): void {
-    if (!this.favorites.find(p => p.id === product.id)) {
+    if (this.isFavorite(product.id)) {
+      this.removeFromFavorites(product.id);
+    } else {
       this.favorites.push({ ...product, favorite: true });
       this.favoriteSubject.next([...this.favorites]);
       this.saveToStorage();

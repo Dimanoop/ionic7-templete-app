@@ -5,6 +5,9 @@
     </ion-buttons>
     <ion-title>Маркетплейс</ion-title>
     <ion-buttons slot="end">
+      <ion-button (click)="openFavorites()">
+        <ion-icon slot="icon-only" name="heart" color="light"></ion-icon>
+      </ion-button>
       <ion-button (click)="openCart()">
         <ion-icon slot="icon-only" name="cart" color="light"></ion-icon>
       </ion-button>

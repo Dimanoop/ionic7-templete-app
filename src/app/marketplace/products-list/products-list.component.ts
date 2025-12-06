@@ -21,6 +21,7 @@ export class ProductsListComponent implements OnInit {
   isLoading = false;
   showFilters = false;
   cartQuantities: { [productId: string]: number } = {};
+  favorites: Product[] = [];
 
   // Filter options
   sortBy: string = 'popularity';
@@ -63,6 +64,11 @@ export class ProductsListComponent implements OnInit {
       cart.forEach(item => {
         this.cartQuantities[item.product.id] = item.quantity;
       });
+    });
+
+    // Subscribe to favorites to track changes
+    this.marketplaceService.favorites$.subscribe(favorites => {
+      this.favorites = favorites;
     });
   }
 
@@ -184,6 +190,10 @@ export class ProductsListComponent implements OnInit {
 
   goToCart() {
     this.router.navigate(['/marketplace/cart']);
+  }
+
+  goToFavorites() {
+    this.router.navigate(['/marketplace/favorites']);
   }
 
   scrollToTop() {

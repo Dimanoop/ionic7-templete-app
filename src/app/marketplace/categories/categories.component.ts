@@ -42,6 +42,14 @@ export class CategoriesComponent implements OnInit {
     this.selectedCategory = null;
   }
 
+  goToFavorites() {
+    this.router.navigate(['/marketplace/favorites']);
+  }
+
+  goToCart() {
+    this.router.navigate(['/marketplace/cart']);
+  }
+
   getDiscountPercent(oldPrice: number | undefined, price: number | undefined): number {
     if (!oldPrice || !price) return 0;
     return Math.round(((oldPrice - price) / oldPrice) * 100);
