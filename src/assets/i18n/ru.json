@@ -103,6 +103,16 @@
     "DELETE_MARKED_NOTES": "Удалить все выделенные заметки"
   },
   "MARKETPLACE":{
-    "COMPONENT_TITLE": "Маркетплейс"
+    "COMPONENT_TITLE": "Маркетплейс",
+    "HERO_SUBTITLE": "Найди лучшие предложения и новинки",
+    "HERO_BUTTON": "Смотреть все товары",
+    "SEARCH_PLACEHOLDER": "Поиск товаров...",
+    "CATEGORIES_TITLE": "Категории",
+    "FEATURED_TITLE": "Популярные товары",
+    "ALL": "Все",
+    "IN_STOCK": "В наличии",
+    "OUT_OF_STOCK": "Нет в наличии",
+    "ADD_TO_CART": "В корзину",
+    "LOAD_MORE": "Загрузить ещё"
   }
 }

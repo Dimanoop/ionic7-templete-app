@@ -108,7 +108,17 @@
     "DELETE_MARKED_NOTES": "Delete all marked notes"
   },
   "MARKETPLACE":{
-    "COMPONENT_TITLE": "Markeplace"
+    "COMPONENT_TITLE": "Marketplace",
+    "HERO_SUBTITLE": "Find the best deals and new arrivals",
+    "HERO_BUTTON": "See all products",
+    "SEARCH_PLACEHOLDER": "Search products...",
+    "CATEGORIES_TITLE": "Categories",
+    "FEATURED_TITLE": "Popular products",
+    "ALL": "All",
+    "IN_STOCK": "In stock",
+    "OUT_OF_STOCK": "Out of stock",
+    "ADD_TO_CART": "Add to cart",
+    "LOAD_MORE": "Load more"
   }
 
 }

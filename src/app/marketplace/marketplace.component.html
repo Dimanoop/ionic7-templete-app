@@ -19,7 +19,7 @@
     <ion-searchbar 
       [(ngModel)]="searchQuery"
       (ionChange)="onSearch($event)"
-      placeholder="Поиск товаров..."
+      [placeholder]="'MARKETPLACE.SEARCH_PLACEHOLDER' | translate"
       debounce="500"
       clearIcon="close"
     ></ion-searchbar>
@@ -30,17 +30,17 @@
   <!-- Hero Banner -->
   <div class="hero-banner">
     <div class="hero-content">
-      <h1>Маркетплейс</h1>
-      <p>Найди лучшие предложения и новинки</p>
+      <h1>{{ 'MARKETPLACE.COMPONENT_TITLE' | translate }}</h1>
+      <p>{{ 'MARKETPLACE.HERO_SUBTITLE' | translate }}</p>
       <ion-button expand="block" color="light" (click)="scrollToProducts()">
-        Смотреть все товары
+        {{ 'MARKETPLACE.HERO_BUTTON' | translate }}
       </ion-button>
     </div>
   </div>
 
   <!-- Categories Quick Access -->
   <div class="categories-section">
-    <h2>Категории</h2>
+    <h2>{{ 'MARKETPLACE.CATEGORIES_TITLE' | translate }}</h2>
     <div class="categories-scroll">
       <div class="categories-container">
         <div class="category-card" (click)="selectCategory(category)" *ngFor="let category of categories">
@@ -54,8 +54,8 @@
   <!-- Featured Products Section -->
   <div class="featured-section">
     <div class="section-header">
-      <h2>Популярные товары</h2>
-      <ion-button fill="clear" size="small">Все</ion-button>
+      <h2>{{ 'MARKETPLACE.FEATURED_TITLE' | translate }}</h2>
+      <ion-button fill="clear" size="small">{{ 'MARKETPLACE.ALL' | translate }}</ion-button>
     </div>
     
     <ion-grid fixed="true">
@@ -139,7 +139,7 @@
               <!-- Stock Status -->
               <div class="stock-status" [class.out-of-stock]="!product.inStock">
                 <ion-icon [name]="product.inStock ? 'checkmark-circle' : 'close-circle'" size="small"></ion-icon>
-                {{ product.inStock ? 'В наличии' : 'Нет в наличии' }}
+                {{ product.inStock ? ('MARKETPLACE.IN_STOCK' | translate) : ('MARKETPLACE.OUT_OF_STOCK' | translate) }} 
               </div>
             </ion-card-content>
 
@@ -164,7 +164,7 @@
                   (click)="addToCart(product, $event)"
                 >
                   <ion-icon slot="start" name="cart-outline"></ion-icon>
-                  В корзину
+                  {{ 'MARKETPLACE.ADD_TO_CART' | translate }} 
                 </ion-button>
               </ng-template>
             </div>
@@ -182,7 +182,7 @@
       (click)="loadMoreProducts()"
       *ngIf="filteredProducts.length < totalProducts"
     >
-      Загрузить ещё
+      {{ 'MARKETPLACE.LOAD_MORE' | translate }}
     </ion-button>
   </div>
 </ion-content>
