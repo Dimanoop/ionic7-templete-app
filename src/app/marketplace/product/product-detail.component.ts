@@ -29,10 +29,27 @@ export class ProductDetailComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    // If we have a resolved product from route, use it
+    this.route.data.subscribe(data => {
+      const resolved = data['product'];
+      if (resolved) {
+        this.product = resolved;
+        this.marketplaceService.addToRecentlyViewed(resolved);
+        this.initializeProductDetails();
+        this.checkFavorite();
+      }
+    });
     this.route.params.subscribe(params => {
       const productId = params['id'];
-      if (productId && !this.product) {
-        this.loadProduct(productId);
+      if (productId) {
+        const currentId = this.product ? String(this.product.id) : undefined;
+        // If we don't have a product yet or the requested id differs, load it
+        if (!this.product || String(productId) !== currentId) {
+          this.loadProduct(productId);
+        } else {
+          // Otherwise just initialize the UI state
+          this.initializeProductDetails();
+        }
       } else if (this.product) {
         this.initializeProductDetails();
       }
@@ -40,9 +57,11 @@ export class ProductDetailComponent implements OnInit {
   }
 
   loadProduct(productId: string | number) {
+    console.debug('[ProductDetail] Requesting product by id', productId);
     this.marketplaceService.getProductById(productId).subscribe(product => {
       if (product) {
         this.product = product;
+        console.debug('[ProductDetail] Loaded product', product.id, product.title, 'source=', (product as any).__lookupSource);
         this.marketplaceService.addToRecentlyViewed(product);
         this.initializeProductDetails();
         this.checkFavorite();

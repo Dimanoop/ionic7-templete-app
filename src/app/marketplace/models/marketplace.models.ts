@@ -68,6 +68,7 @@ export interface Product {
   inStock: boolean;
   favorite?: boolean;
   tags?: string[];
+  __lookupSource?: string; // debug: indicates where product was loaded from (cache/reload/mock)
 }
 
 export interface FilterOptions {

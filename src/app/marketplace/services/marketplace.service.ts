@@ -41,6 +41,7 @@ export class MarketplaceService {
       // clear idMap because ids are stable numeric now
       this.idMap = {};
       this.productsCache = { ...data, products };
+      console.debug('[MarketplaceService] processLoadedData: loaded products count', this.productsCache.products.length);
       this.categoriesCache = data.categories || [];
       // Ensure loaded categories include nameKey for translation fallback
       this.categoriesCache = this.categoriesCache.map((c: any) => this.withNameKey(c));
@@ -53,6 +54,7 @@ export class MarketplaceService {
         return { ...p, id: newId };
       });
       this.productsCache = { ...data, products };
+      console.debug('[MarketplaceService] processLoadedData: loaded products count', this.productsCache.products.length);
       this.categoriesCache = data.categories || [];
       // Ensure loaded categories include nameKey for translation fallback
       this.categoriesCache = this.categoriesCache.map((c: any) => this.withNameKey(c));
@@ -348,33 +350,65 @@ export class MarketplaceService {
 
   getProductById(productId: string | number): Observable<Product | undefined> {
     return new Observable(observer => {
-        // Try to resolve id mapping if productId refers to original (string) id
-        const requested = String(productId);
-        // If products cache exists try to find by numeric id or by original id mapping
-        if (this.productsCache && this.productsCache.products) {
-          // Try numeric match
-          const numeric = Number(productId);
-          let found = this.productsCache.products.find((p: Product) => p.id === numeric);
-          if (!found) {
-            // Try mapped original id
-            const mapped = this.idMap[requested];
-            if (mapped) {
-              found = this.productsCache.products.find((p: Product) => p.id === mapped);
-            }
-          }
-          if (found) {
-            observer.next(found);
-            observer.complete();
-            return;
+      const requested = String(productId);
+      const lookup = (): Product | undefined => {
+        if (!this.productsCache || !this.productsCache.products) return undefined;
+        const numeric = Number(productId);
+        let found = this.productsCache.products.find((p: Product) => p.id === numeric);
+        if (!found) {
+          const mapped = this.idMap[requested];
+          if (mapped) {
+            found = this.productsCache.products.find((p: Product) => p.id === mapped);
           }
         }
+        // Also try matching string ids if any are strings
+        if (!found) {
+          found = this.productsCache.products.find((p: Product) => String((p as any).id) === requested);
+        }
+        return found;
+      };
 
-      // Симулируем API вызов — возвращаем сгенерированный товар как fallback
-      setTimeout(() => {
+      const tryFoundOrFallback = (source: string) => {
+        const f = lookup();
+        console.debug(`[MarketplaceService] getProductById(${productId}) - lookup from ${source}:`, f ? `found id=${f.id}` : 'not found');
+        if (f) {
+          (f as any).__lookupSource = source;
+          observer.next(f);
+          observer.complete();
+          return true;
+        }
+        return false;
+      };
+
+      // If we have cached data, try to find immediately
+      if (this.productsCache && this.productsCache.products) {
+        if (tryFoundOrFallback('cache')) return;
+        // no product found in cache -> return generated mock after small delay
+        setTimeout(() => {
+          console.debug(`[MarketplaceService] getProductById(${productId}) - returning mock fallback`);
+          const product = this.generateMockProduct(productId);
+          (product as any).__lookupSource = 'mock';
+          observer.next(product);
+          observer.complete();
+        }, 300);
+        return;
+      }
+
+      // If cache is not ready, try reloading data then lookup again
+      console.debug(`[MarketplaceService] getProductById(${productId}) - cache empty, reloading`);
+      this.reloadProducts().subscribe(() => {
+        if (tryFoundOrFallback('reload')) return;
+        // Still not found - return mock product
+        console.debug(`[MarketplaceService] getProductById(${productId}) - after reload returning mock fallback`);
         const product = this.generateMockProduct(productId);
         observer.next(product);
         observer.complete();
-      }, 300);
+      }, (err) => {
+        console.warn(`[MarketplaceService] reloadProducts failed`, err);
+        const product = this.generateMockProduct(productId);
+        observer.next(product);
+        observer.complete();
+      });
     });
   }
 

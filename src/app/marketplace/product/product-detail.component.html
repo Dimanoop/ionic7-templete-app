@@ -60,6 +60,7 @@
   <!-- Product Info Header -->
   <div class="product-header">
     <h1 class="title">{{ product.title }}</h1>
+    <div class="product-id" style="font-size: 12px; color: var(--ion-color-medium);">ID: {{ product.id }} — Источник: {{ product['__lookupSource'] || 'unknown' }}</div>
 
     <!-- Seller Info -->
     <div class="seller-info" *ngIf="product.seller">

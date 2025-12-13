@@ -5,6 +5,7 @@ import { ProductComponent } from "./product/product.component"
 import { CategoriesComponent } from './categories/categories.component';
 import { ProductsListComponent } from './products-list/products-list.component';
 import { ProductDetailComponent } from './product/product-detail.component';
+import { ProductResolver } from './services/product-resolver.service';
 import { CartComponent } from './cart/cart.component';
 import { FavoritesComponent } from './favorites/favorites.component';
 
@@ -23,7 +24,8 @@ const routes: Routes = [
   },
   {
     path: 'product/:id',
-    component: ProductDetailComponent
+    component: ProductDetailComponent,
+    resolve: { product: ProductResolver }
   },
   {
     path: 'product',
