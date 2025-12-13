@@ -357,11 +357,11 @@ export class MarketplaceService {
         discount: Math.floor(Math.random() * 50),
         rating: Math.round((Math.random() * 2 + 3) * 10) / 10,
         reviews: Math.floor(Math.random() * 500) + 10,
-        image: `/assets/img/product-${Math.floor(Math.random() * 5) + 1}.jpg`,
+        image: `/assets/sample-images/marketplace/product-${Math.floor(Math.random() * 5) + 1}.jpg`,
         images: [
-          `/assets/img/product-${Math.floor(Math.random() * 5) + 1}.jpg`,
-          `/assets/img/product-${Math.floor(Math.random() * 5) + 1}.jpg`,
-          `/assets/img/product-${Math.floor(Math.random() * 5) + 1}.jpg`
+          `/assets/sample-images/marketplace/product-${Math.floor(Math.random() * 5) + 1}.jpg`,
+          `/assets/sample-images/marketplace/product-${Math.floor(Math.random() * 5) + 1}.jpg`,
+          `/assets/sample-images/marketplace/product-${Math.floor(Math.random() * 5) + 1}.jpg`
         ],
         badge: badges[Math.floor(Math.random() * badges.length)],
         seller: 'Официальный магазин',
@@ -412,12 +412,12 @@ export class MarketplaceService {
       discount: 28,
       rating: 4.5,
       reviews: 124,
-      image: '/assets/img/product-1.jpg',
+      image: '/assets/sample-images/marketplace/product-1.jpg',
       images: [
-        '/assets/img/product-1.jpg',
-        '/assets/img/product-2.jpg',
-        '/assets/img/product-3.jpg',
-        '/assets/img/product-4.jpg'
+        '/assets/sample-images/marketplace/product-1.jpg',
+        '/assets/sample-images/marketplace/product-2.jpg',
+        '/assets/sample-images/marketplace/product-3.jpg',
+        '/assets/sample-images/marketplace/product-4.jpg'
       ],
       badge: 'Хит',
       seller: 'Официальный магазин',

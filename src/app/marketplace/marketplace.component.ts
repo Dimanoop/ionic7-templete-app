@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { IonContent } from '@ionic/angular';
 import { MarketplaceService } from './services/marketplace.service';
 import { Product, Category } from './models/marketplace.models';
+import { TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-marketplace',
@@ -24,7 +25,8 @@ export class MarketplaceComponent implements OnInit {
 
   constructor(
     private marketplaceService: MarketplaceService,
-    private router: Router
+    private router: Router,
+    private translate: TranslateService
   ) {}
 
   ngOnInit() {

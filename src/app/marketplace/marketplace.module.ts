@@ -11,6 +11,7 @@ import { CategoriesComponent } from './categories/categories.component';
 import { ProductsListComponent } from './products-list/products-list.component';
 import { CartComponent } from './cart/cart.component';
 import { FavoritesComponent } from './favorites/favorites.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   declarations: [
@@ -20,9 +21,10 @@ import { FavoritesComponent } from './favorites/favorites.component';
     CategoriesComponent,
     ProductsListComponent,
     CartComponent,
-    FavoritesComponent
+    FavoritesComponent,
   ],
   imports: [
+    TranslateModule,
     CommonModule,
     IonicModule,
     FormsModule,
