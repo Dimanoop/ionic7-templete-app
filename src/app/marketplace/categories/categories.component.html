@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/marketplace"></ion-back-button>
     </ion-buttons>
-    <ion-title>Категории</ion-title>
+    <ion-title>{{ 'MARKETPLACE.CATEGORIES_TITLE' | translate }}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="goToFavorites()">
         <ion-icon slot="icon-only" name="heart"></ion-icon>
@@ -29,7 +29,7 @@
             <div class="category-icon-bg">
               <ion-icon [name]="category.icon" class="category-icon"></ion-icon>
             </div>
-            <h3 class="category-name">{{ category.name }}</h3>
+            <h3 class="category-name">{{ category.nameKey ? (category.nameKey | translate) : category.name }}</h3>
             <p class="category-count">{{ category.productCount | number: '1.0-0' }} товаров</p>
             <ion-icon name="chevron-forward-outline" class="chevron"></ion-icon>
           </div>
@@ -42,7 +42,7 @@
   <div class="subcategories-overlay" *ngIf="showSubcategories" [@slideIn]>
     <div class="subcategories-container">
       <div class="subcategories-header">
-        <h2>{{ selectedCategory?.name }}</h2>
+        <h2>{{ selectedCategory && selectedCategory.nameKey ? (selectedCategory.nameKey | translate) : selectedCategory?.name }}</h2>
         <ion-button fill="clear" (click)="closeSubcategories()">
           <ion-icon slot="icon-only" name="close"></ion-icon>
         </ion-button>
@@ -55,7 +55,7 @@
           (click)="navigateToProducts(selectedCategory!.id)"
         >
           <ion-icon name="apps-outline"></ion-icon>
-          <span>Все товары</span>
+          <span>{{ 'MARKETPLACE.ALL' | translate }}</span>
           <span class="count">{{ selectedCategory?.productCount }}</span>
         </button>
 
@@ -67,7 +67,7 @@
         >
           <ion-icon [name]="subcategory.icon"></ion-icon>
           <div class="subcategory-info">
-            <span class="subcategory-name">{{ subcategory.name }}</span>
+            <span class="subcategory-name">{{ subcategory.nameKey ? (subcategory.nameKey | translate) : subcategory.name }}</span>
             <span class="subcategory-count">{{ subcategory.productCount | number: '1.0-0' }}</span>
           </div>
           <ion-icon name="chevron-forward-outline" class="chevron"></ion-icon>

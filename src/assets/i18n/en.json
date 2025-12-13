@@ -119,6 +119,66 @@
     "OUT_OF_STOCK": "Out of stock",
     "ADD_TO_CART": "Add to cart",
     "LOAD_MORE": "Load more"
+  ,
+  "CATEGORY":{
+      "ELECTRONICS":"Electronics",
+      "CLOTHES":"Clothing & Footwear",
+      "HOME":"Home & Garden",
+      "BEAUTY":"Beauty & Health",
+      "KIDS":"Kids",
+      "FOOD":"Groceries",
+      "AUTO":"Auto",
+      "SPORTS":"Sports & Outdoors",
+      "BOOKS":"Books",
+      "PETS":"Pet Supplies"
+  ,
+    "ELECTRONICS_SMARTPHONES":"Smartphones & Gadgets",
+    "ELECTRONICS_LAPTOPS":"Laptops & Computers",
+    "ELECTRONICS_TV":"TV & Video",
+    "ELECTRONICS_CAMERAS":"Cameras",
+    "ELECTRONICS_AUDIO":"Audio",
+    "ELECTRONICS_GAMES":"Games & Consoles",
+    "ELECTRONICS_ACCESSORIES":"Accessories",
+
+    "CLOTHES_MENS_CLOTHES":"Men's Clothing",
+    "CLOTHES_WOMENS_CLOTHES":"Women's Clothing",
+    "CLOTHES_KIDS_CLOTHES":"Kids' Clothing",
+    "CLOTHES_SHOES":"Shoes",
+
+    "HOME_FURNITURE":"Furniture",
+    "HOME_DECOR":"Decor",
+    "HOME_TOOLS":"Tools",
+    "HOME_TEXTILES":"Textiles & Carpets",
+
+    "BEAUTY_COSMETICS":"Cosmetics",
+    "BEAUTY_PERFUME":"Perfume",
+    "BEAUTY_SKINCARE":"Skincare",
+    "BEAUTY_VITAMINS":"Vitamins & Supplements",
+
+    "KIDS_TOYS":"Toys",
+    "KIDS_BABY_GOODS":"Baby Goods",
+    "KIDS_FURNITURE":"Kids Furniture",
+
+    "FOOD_GROCERY":"Grocery",
+    "FOOD_DRINKS":"Drinks",
+    "FOOD_SNACKS":"Snacks & Sweets",
+
+    "AUTO_PARTS":"Auto Parts",
+    "AUTO_ACCESSORIES":"Accessories",
+    "AUTO_OILS":"Oils & Fluids",
+
+    "SPORTS_EQUIPMENT":"Sports Equipment",
+    "SPORTS_FITNESS":"Fitness & Gym",
+    "SPORTS_TOURISM":"Tourism & Travel",
+
+    "BOOKS_FICTION":"Fiction",
+    "BOOKS_EDUCATION":"Education",
+    "BOOKS_REFERENCE":"Reference",
+
+    "PETS_FOOD":"Pet Food",
+    "PETS_TOYS":"Pet Toys",
+    "PETS_CARE":"Pet Care"
+  }
   }
 
 }

@@ -13,6 +13,7 @@ interface ShoppingItem {
 interface Category {
   id: number;
   name: string;
+  nameKey?: string;
 }
 
 @Component({

@@ -33,7 +33,7 @@
 <!-- Вкладка списка покупок -->
 <div *ngIf="activeTab === 'list'" class="list-container">
   <div *ngFor="let category of categories" class="category-section">
-    <h3 class="category-title">{{ category.name }}</h3>
+    <h3 class="category-title">{{ category.nameKey ? (category.nameKey | translate) : category.name }}</h3>
     
     <div *ngIf="getItemsByCategory(category.id).length > 0; else noItems">
       <div *ngFor="let item of getItemsByCategory(category.id)" 
@@ -104,7 +104,7 @@
     >
       <option [ngValue]="null" disabled selected>Выберите категорию</option>
       <option *ngFor="let category of categories" [ngValue]="category.id">
-        {{ category.name }}
+        {{ category.nameKey ? (category.nameKey | translate) : category.name }}
       </option>
     </select>
   </div>
@@ -141,7 +141,7 @@
   <div class="categories-list">
     <h3>Список категорий</h3>
     <div *ngFor="let category of categories" class="category-item">
-      <span>{{ category.name }}</span>
+    <span>{{ category.nameKey ? (category.nameKey | translate) : category.name }}</span>
       <button 
         class="delete-button" 
         (click)="removeCategory(category.id)"

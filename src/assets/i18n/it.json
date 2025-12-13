@@ -85,4 +85,65 @@
       "LANGUAGE_REMINDER": "Modifica della lingua",
       "GOTO_SETTINGS": "Vai alle impostazioni"
     }
+    ,
+    "MARKETPLACE": {
+      "CATEGORY": {
+        "ELECTRONICS": "Elettronica",
+        "CLOTHES": "Abbigliamento e calzature",
+        "HOME": "Casa e giardino",
+        "BEAUTY": "Bellezza e salute",
+        "KIDS": "Prodotti per bambini",
+        "FOOD": "Generi alimentari",
+        "AUTO": "Auto",
+        "SPORTS": "Sport e tempo libero",
+        "BOOKS": "Libri",
+        "PETS": "Articoli per animali",
+        "ELECTRONICS_SMARTPHONES": "Smartphone e gadget",
+        "ELECTRONICS_LAPTOPS": "Laptop e computer",
+        "ELECTRONICS_TV": "TV e video",
+        "ELECTRONICS_CAMERAS": "Fotocamere",
+        "ELECTRONICS_AUDIO": "Audio",
+        "ELECTRONICS_GAMES": "Giochi e console",
+        "ELECTRONICS_ACCESSORIES": "Accessori",
+
+        "CLOTHES_MENS_CLOTHES": "Abbigliamento da uomo",
+        "CLOTHES_WOMENS_CLOTHES": "Abbigliamento da donna",
+        "CLOTHES_KIDS_CLOTHES": "Abbigliamento per bambini",
+        "CLOTHES_SHOES": "Scarpe",
+
+        "HOME_FURNITURE": "Mobili",
+        "HOME_DECOR": "Decorazioni",
+        "HOME_TOOLS": "Utensili",
+        "HOME_TEXTILES": "Tessuti e tappeti",
+
+        "BEAUTY_COSMETICS": "Cosmetici",
+        "BEAUTY_PERFUME": "Profumi",
+        "BEAUTY_SKINCARE": "Cura della pelle",
+        "BEAUTY_VITAMINS": "Vitamine e integratori",
+
+        "KIDS_TOYS": "Giocattoli",
+        "KIDS_BABY_GOODS": "Prodotti per neonati",
+        "KIDS_FURNITURE": "Mobili per bambini",
+
+        "FOOD_GROCERY": "Generi alimentari",
+        "FOOD_DRINKS": "Bevande",
+        "FOOD_SNACKS": "Snack e dolci",
+
+        "AUTO_PARTS": "Ricambi auto",
+        "AUTO_ACCESSORIES": "Accessori",
+        "AUTO_OILS": "Oli e liquidi",
+
+        "SPORTS_EQUIPMENT": "Attrezzatura sportiva",
+        "SPORTS_FITNESS": "Fitness e palestra",
+        "SPORTS_TOURISM": "Turismo e viaggi",
+
+        "BOOKS_FICTION": "Narrativa",
+        "BOOKS_EDUCATION": "Istruzione",
+        "BOOKS_REFERENCE": "Riferimenti",
+
+        "PETS_FOOD": "Cibo per animali",
+        "PETS_TOYS": "Giocattoli per animali",
+        "PETS_CARE": "Cura degli animali"
+      }
+    }
   }

@@ -45,7 +45,7 @@
       <div class="categories-container">
         <div class="category-card" (click)="selectCategory(category)" *ngFor="let category of categories">
           <ion-icon [name]="category.icon" size="large" color="primary"></ion-icon>
-          <span>{{ category.name }}</span>
+          <span>{{ category.nameKey ? (category.nameKey | translate) : category.name }}</span>
         </div>
       </div>
     </div>

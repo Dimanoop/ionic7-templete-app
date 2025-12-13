@@ -114,5 +114,65 @@
     "OUT_OF_STOCK": "Нет в наличии",
     "ADD_TO_CART": "В корзину",
     "LOAD_MORE": "Загрузить ещё"
+  ,
+  "CATEGORY":{
+      "ELECTRONICS":"Электроника",
+      "CLOTHES":"Одежда и обувь",
+      "HOME":"Дом и сад",
+      "BEAUTY":"Красота и здоровье",
+      "KIDS":"Детские товары",
+      "FOOD":"Продукты питания",
+      "AUTO":"Автотовары",
+      "SPORTS":"Спорт и отдых",
+      "BOOKS":"Книги",
+      "PETS":"Зоотовары"
+  ,
+    "ELECTRONICS_SMARTPHONES":"Смартфоны и гаджеты",
+    "ELECTRONICS_LAPTOPS":"Ноутбуки и компьютеры",
+    "ELECTRONICS_TV":"Телевизоры и видео",
+    "ELECTRONICS_CAMERAS":"Фототехника",
+    "ELECTRONICS_AUDIO":"Аудиотехника",
+    "ELECTRONICS_GAMES":"Игры и консоли",
+    "ELECTRONICS_ACCESSORIES":"Аксессуары",
+
+    "CLOTHES_MENS_CLOTHES":"Мужская одежда",
+    "CLOTHES_WOMENS_CLOTHES":"Женская одежда",
+    "CLOTHES_KIDS_CLOTHES":"Детская одежда",
+    "CLOTHES_SHOES":"Обувь",
+
+    "HOME_FURNITURE":"Мебель",
+    "HOME_DECOR":"Декор",
+    "HOME_TOOLS":"Инструменты",
+    "HOME_TEXTILES":"Текстиль и ковры",
+
+    "BEAUTY_COSMETICS":"Косметика",
+    "BEAUTY_PERFUME":"Парфюмерия",
+    "BEAUTY_SKINCARE":"Уход за кожей",
+    "BEAUTY_VITAMINS":"Витамины и БАДы",
+
+    "KIDS_TOYS":"Игрушки",
+    "KIDS_BABY_GOODS":"Товары для малышей",
+    "KIDS_FURNITURE":"Детская мебель",
+
+    "FOOD_GROCERY":"Продукты",
+    "FOOD_DRINKS":"Напитки",
+    "FOOD_SNACKS":"Снеки и сладости",
+
+    "AUTO_PARTS":"Запчасти",
+    "AUTO_ACCESSORIES":"Аксессуары",
+    "AUTO_OILS":"Масла и жидкости",
+
+    "SPORTS_EQUIPMENT":"Спортивный инвентарь",
+    "SPORTS_FITNESS":"Фитнес и тренажеры",
+    "SPORTS_TOURISM":"Туризм и путешествия",
+
+    "BOOKS_FICTION":"Художественная литература",
+    "BOOKS_EDUCATION":"Учебная литература",
+    "BOOKS_REFERENCE":"Справочники",
+
+    "PETS_FOOD":"Корм для животных",
+    "PETS_TOYS":"Игрушки для животных",
+    "PETS_CARE":"Уход за животными"
+  }
   }
 }

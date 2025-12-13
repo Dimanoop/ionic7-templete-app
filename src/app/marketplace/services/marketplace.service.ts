@@ -42,6 +42,8 @@ export class MarketplaceService {
       this.idMap = {};
       this.productsCache = { ...data, products };
       this.categoriesCache = data.categories || [];
+      // Ensure loaded categories include nameKey for translation fallback
+      this.categoriesCache = this.categoriesCache.map((c: any) => this.withNameKey(c));
     } else {
       // Assign numeric ids to loaded products to ensure unique incremental ids
       const products = rawProducts.map((p: any) => {
@@ -52,7 +54,33 @@ export class MarketplaceService {
       });
       this.productsCache = { ...data, products };
       this.categoriesCache = data.categories || [];
+      // Ensure loaded categories include nameKey for translation fallback
+      this.categoriesCache = this.categoriesCache.map((c: any) => this.withNameKey(c));
     }
+  }
+
+  private sanitizeKey(id: string): string {
+    return String(id || '').replace(/[^A-Za-z0-9]+/g, '_').toUpperCase();
+  }
+
+  private withNameKey(cat: any): any {
+    if (!cat) return cat;
+    // Top-level category key
+    if (!cat.nameKey) {
+      cat.nameKey = `MARKETPLACE.CATEGORY.${this.sanitizeKey(cat.id)}`;
+    }
+    // Ensure subcategories have nameKey too
+    if (cat.subcategories && Array.isArray(cat.subcategories)) {
+      cat.subcategories = cat.subcategories.map((sub: any) => {
+        if (!sub.nameKey) {
+          const parentKey = this.sanitizeKey(cat.id);
+          const childKey = this.sanitizeKey(sub.id || sub.name);
+          sub.nameKey = `MARKETPLACE.CATEGORY.${parentKey}_${childKey}`;
+        }
+        return sub;
+      });
+    }
+    return cat;
   }
 
   private loadProductsData(): void {
@@ -94,6 +122,7 @@ export class MarketplaceService {
       {
         id: 'electronics',
         name: 'Электроника',
+        nameKey: 'MARKETPLACE.CATEGORY.ELECTRONICS',
         icon: 'phone-portrait-outline',
         productCount: 15420,
         description: 'Смартфоны, ноутбуки, фототехника',
@@ -102,6 +131,7 @@ export class MarketplaceService {
       {
         id: 'clothes',
         name: 'Одежда и обувь',
+        nameKey: 'MARKETPLACE.CATEGORY.CLOTHES',
         icon: 'shirt-outline',
         productCount: 28540,
         description: 'Мужская, женская, детская одежда',
@@ -110,6 +140,7 @@ export class MarketplaceService {
       {
         id: 'home',
         name: 'Дом и сад',
+        nameKey: 'MARKETPLACE.CATEGORY.HOME',
         icon: 'home-outline',
         productCount: 12350,
         description: 'Мебель, декор, инструменты',
@@ -118,6 +149,7 @@ export class MarketplaceService {
       {
         id: 'beauty',
         name: 'Красота и здоровье',
+        nameKey: 'MARKETPLACE.CATEGORY.BEAUTY',
         icon: 'sparkles-outline',
         productCount: 18760,
         description: 'Косметика, парфюмерия, витамины',
@@ -126,6 +158,7 @@ export class MarketplaceService {
       {
         id: 'kids',
         name: 'Детские товары',
+        nameKey: 'MARKETPLACE.CATEGORY.KIDS',
         icon: 'heart-circle-outline',
         productCount: 9820,
         description: 'Игрушки, одежда, товары для малышей',
@@ -134,6 +167,7 @@ export class MarketplaceService {
       {
         id: 'food',
         name: 'Продукты питания',
+        nameKey: 'MARKETPLACE.CATEGORY.FOOD',
         icon: 'fast-food-outline',
         productCount: 22100,
         description: 'Продукты, напитки, снеки',
@@ -142,6 +176,7 @@ export class MarketplaceService {
       {
         id: 'auto',
         name: 'Автотовары',
+        nameKey: 'MARKETPLACE.CATEGORY.AUTO',
         icon: 'car-outline',
         productCount: 8540,
         description: 'Запчасти, аксессуары, масла',
@@ -150,6 +185,7 @@ export class MarketplaceService {
       {
         id: 'sports',
         name: 'Спорт и отдых',
+        nameKey: 'MARKETPLACE.CATEGORY.SPORTS',
         icon: 'bicycle-outline',
         productCount: 14200,
         description: 'Спортивный инвентарь, туризм',
@@ -158,6 +194,7 @@ export class MarketplaceService {
       {
         id: 'books',
         name: 'Книги',
+        nameKey: 'MARKETPLACE.CATEGORY.BOOKS',
         icon: 'book-outline',
         productCount: 45320,
         description: 'Художественные, учебные книги',
@@ -166,6 +203,7 @@ export class MarketplaceService {
       {
         id: 'pets',
         name: 'Зоотовары',
+        nameKey: 'MARKETPLACE.CATEGORY.PETS',
         icon: 'paw-outline',
         productCount: 7650,
         description: 'Корм, игрушки для животных',
@@ -176,88 +214,88 @@ export class MarketplaceService {
 
   private getElectronicsSubcategories(): Category[] {
     return [
-      { id: 'smartphones', name: 'Смартфоны и гаджеты', icon: 'phone-portrait-outline', productCount: 3200 },
-      { id: 'laptops', name: 'Ноутбуки и компьютеры', icon: 'laptop-outline', productCount: 1850 },
-      { id: 'tv', name: 'Телевизоры и видео', icon: 'desktop-outline', productCount: 980 },
-      { id: 'cameras', name: 'Фототехника', icon: 'camera-outline', productCount: 750 },
-      { id: 'audio', name: 'Аудиотехника', icon: 'volume-high-outline', productCount: 2100 },
-      { id: 'games', name: 'Игры и консоли', icon: 'game-controller-outline', productCount: 1540 },
-      { id: 'accessories', name: 'Аксессуары', icon: 'cube-outline', productCount: 5000 }
+      { id: 'smartphones', name: 'Смартфоны и гаджеты', nameKey: 'MARKETPLACE.CATEGORY.ELECTRONICS_SMARTPHONES', icon: 'phone-portrait-outline', productCount: 3200 },
+      { id: 'laptops', name: 'Ноутбуки и компьютеры', nameKey: 'MARKETPLACE.CATEGORY.ELECTRONICS_LAPTOPS', icon: 'laptop-outline', productCount: 1850 },
+      { id: 'tv', name: 'Телевизоры и видео', nameKey: 'MARKETPLACE.CATEGORY.ELECTRONICS_TV', icon: 'desktop-outline', productCount: 980 },
+      { id: 'cameras', name: 'Фототехника', nameKey: 'MARKETPLACE.CATEGORY.ELECTRONICS_CAMERAS', icon: 'camera-outline', productCount: 750 },
+      { id: 'audio', name: 'Аудиотехника', nameKey: 'MARKETPLACE.CATEGORY.ELECTRONICS_AUDIO', icon: 'volume-high-outline', productCount: 2100 },
+      { id: 'games', name: 'Игры и консоли', nameKey: 'MARKETPLACE.CATEGORY.ELECTRONICS_GAMES', icon: 'game-controller-outline', productCount: 1540 },
+      { id: 'accessories', name: 'Аксессуары', nameKey: 'MARKETPLACE.CATEGORY.ELECTRONICS_ACCESSORIES', icon: 'cube-outline', productCount: 5000 }
     ];
   }
 
   private getClothesSubcategories(): Category[] {
     return [
-      { id: 'mens-clothes', name: 'Мужская одежда', icon: 'person-outline', productCount: 8900 },
-      { id: 'womens-clothes', name: 'Женская одежда', icon: 'person-outline', productCount: 12400 },
-      { id: 'kids-clothes', name: 'Детская одежда', icon: 'heart-circle-outline', productCount: 4200 },
-      { id: 'shoes', name: 'Обувь', icon: 'footsteps-outline', productCount: 7800 }
+      { id: 'mens-clothes', name: 'Мужская одежда', nameKey: 'MARKETPLACE.CATEGORY.CLOTHES_MENS_CLOTHES', icon: 'person-outline', productCount: 8900 },
+      { id: 'womens-clothes', name: 'Женская одежда', nameKey: 'MARKETPLACE.CATEGORY.CLOTHES_WOMENS_CLOTHES', icon: 'person-outline', productCount: 12400 },
+      { id: 'kids-clothes', name: 'Детская одежда', nameKey: 'MARKETPLACE.CATEGORY.CLOTHES_KIDS_CLOTHES', icon: 'heart-circle-outline', productCount: 4200 },
+      { id: 'shoes', name: 'Обувь', nameKey: 'MARKETPLACE.CATEGORY.CLOTHES_SHOES', icon: 'footsteps-outline', productCount: 7800 }
     ];
   }
 
   private getHomeSubcategories(): Category[] {
     return [
-      { id: 'furniture', name: 'Мебель', icon: 'bed-outline', productCount: 3400 },
-      { id: 'decor', name: 'Декор', icon: 'color-palette-outline', productCount: 5600 },
-      { id: 'tools', name: 'Инструменты', icon: 'build-outline', productCount: 2100 },
-      { id: 'textiles', name: 'Текстиль и ковры', icon: 'square-outline', productCount: 1250 }
+      { id: 'furniture', name: 'Мебель', nameKey: 'MARKETPLACE.CATEGORY.HOME_FURNITURE', icon: 'bed-outline', productCount: 3400 },
+      { id: 'decor', name: 'Декор', nameKey: 'MARKETPLACE.CATEGORY.HOME_DECOR', icon: 'color-palette-outline', productCount: 5600 },
+      { id: 'tools', name: 'Инструменты', nameKey: 'MARKETPLACE.CATEGORY.HOME_TOOLS', icon: 'build-outline', productCount: 2100 },
+      { id: 'textiles', name: 'Текстиль и ковры', nameKey: 'MARKETPLACE.CATEGORY.HOME_TEXTILES', icon: 'square-outline', productCount: 1250 }
     ];
   }
 
   private getBeautySubcategories(): Category[] {
     return [
-      { id: 'cosmetics', name: 'Косметика', icon: 'sparkles-outline', productCount: 6500 },
-      { id: 'perfume', name: 'Парфюмерия', icon: 'water-outline', productCount: 2100 },
-      { id: 'skincare', name: 'Уход за кожей', icon: 'leaf-outline', productCount: 5800 },
-      { id: 'vitamins', name: 'Витамины и БАДы', icon: 'medical-outline', productCount: 4360 }
+      { id: 'cosmetics', name: 'Косметика', nameKey: 'MARKETPLACE.CATEGORY.BEAUTY_COSMETICS', icon: 'sparkles-outline', productCount: 6500 },
+      { id: 'perfume', name: 'Парфюмерия', nameKey: 'MARKETPLACE.CATEGORY.BEAUTY_PERFUME', icon: 'water-outline', productCount: 2100 },
+      { id: 'skincare', name: 'Уход за кожей', nameKey: 'MARKETPLACE.CATEGORY.BEAUTY_SKINCARE', icon: 'leaf-outline', productCount: 5800 },
+      { id: 'vitamins', name: 'Витамины и БАДы', nameKey: 'MARKETPLACE.CATEGORY.BEAUTY_VITAMINS', icon: 'medical-outline', productCount: 4360 }
     ];
   }
 
   private getKidsSubcategories(): Category[] {
     return [
-      { id: 'toys', name: 'Игрушки', icon: 'heart-circle-outline', productCount: 4200 },
-      { id: 'baby-goods', name: 'Товары для малышей', icon: 'bed-outline', productCount: 3100 },
-      { id: 'kids-furniture', name: 'Детская мебель', icon: 'chair-outline', productCount: 1520 }
+      { id: 'toys', name: 'Игрушки', nameKey: 'MARKETPLACE.CATEGORY.KIDS_TOYS', icon: 'heart-circle-outline', productCount: 4200 },
+      { id: 'baby-goods', name: 'Товары для малышей', nameKey: 'MARKETPLACE.CATEGORY.KIDS_BABY_GOODS', icon: 'bed-outline', productCount: 3100 },
+      { id: 'kids-furniture', name: 'Детская мебель', nameKey: 'MARKETPLACE.CATEGORY.KIDS_FURNITURE', icon: 'chair-outline', productCount: 1520 }
     ];
   }
 
   private getFoodSubcategories(): Category[] {
     return [
-      { id: 'grocery', name: 'Продукты', icon: 'fast-food-outline', productCount: 12000 },
-      { id: 'drinks', name: 'Напитки', icon: 'water-outline', productCount: 5400 },
-      { id: 'snacks', name: 'Снеки и сладости', icon: 'happy-outline', productCount: 4700 }
+      { id: 'grocery', name: 'Продукты', nameKey: 'MARKETPLACE.CATEGORY.FOOD_GROCERY', icon: 'fast-food-outline', productCount: 12000 },
+      { id: 'drinks', name: 'Напитки', nameKey: 'MARKETPLACE.CATEGORY.FOOD_DRINKS', icon: 'water-outline', productCount: 5400 },
+      { id: 'snacks', name: 'Снеки и сладости', nameKey: 'MARKETPLACE.CATEGORY.FOOD_SNACKS', icon: 'happy-outline', productCount: 4700 }
     ];
   }
 
   private getAutoSubcategories(): Category[] {
     return [
-      { id: 'parts', name: 'Запчасти', icon: 'car-outline', productCount: 3200 },
-      { id: 'accessories-auto', name: 'Аксессуары', icon: 'cube-outline', productCount: 2800 },
-      { id: 'oils', name: 'Масла и жидкости', icon: 'water-outline', productCount: 1540 }
+      { id: 'parts', name: 'Запчасти', nameKey: 'MARKETPLACE.CATEGORY.AUTO_PARTS', icon: 'car-outline', productCount: 3200 },
+      { id: 'accessories-auto', name: 'Аксессуары', nameKey: 'MARKETPLACE.CATEGORY.AUTO_ACCESSORIES', icon: 'cube-outline', productCount: 2800 },
+      { id: 'oils', name: 'Масла и жидкости', nameKey: 'MARKETPLACE.CATEGORY.AUTO_OILS', icon: 'water-outline', productCount: 1540 }
     ];
   }
 
   private getSportsSubcategories(): Category[] {
     return [
-      { id: 'sports-equipment', name: 'Спортивный инвентарь', icon: 'bicycle-outline', productCount: 5600 },
-      { id: 'fitness', name: 'Фитнес и тренажеры', icon: 'barbell-outline', productCount: 3200 },
-      { id: 'tourism', name: 'Туризм и путешествия', icon: 'backpack-outline', productCount: 5400 }
+      { id: 'sports-equipment', name: 'Спортивный инвентарь', nameKey: 'MARKETPLACE.CATEGORY.SPORTS_EQUIPMENT', icon: 'bicycle-outline', productCount: 5600 },
+      { id: 'fitness', name: 'Фитнес и тренажеры', nameKey: 'MARKETPLACE.CATEGORY.SPORTS_FITNESS', icon: 'barbell-outline', productCount: 3200 },
+      { id: 'tourism', name: 'Туризм и путешествия', nameKey: 'MARKETPLACE.CATEGORY.SPORTS_TOURISM', icon: 'backpack-outline', productCount: 5400 }
     ];
   }
 
   private getBooksSubcategories(): Category[] {
     return [
-      { id: 'fiction', name: 'Художественная литература', icon: 'book-outline', productCount: 18900 },
-      { id: 'education', name: 'Учебная литература', icon: 'school-outline', productCount: 12400 },
-      { id: 'reference', name: 'Справочники', icon: 'help-circle-outline', productCount: 14020 }
+      { id: 'fiction', name: 'Художественная литература', nameKey: 'MARKETPLACE.CATEGORY.BOOKS_FICTION', icon: 'book-outline', productCount: 18900 },
+      { id: 'education', name: 'Учебная литература', nameKey: 'MARKETPLACE.CATEGORY.BOOKS_EDUCATION', icon: 'school-outline', productCount: 12400 },
+      { id: 'reference', name: 'Справочники', nameKey: 'MARKETPLACE.CATEGORY.BOOKS_REFERENCE', icon: 'help-circle-outline', productCount: 14020 }
     ];
   }
 
   private getPetsSubcategories(): Category[] {
     return [
-      { id: 'pet-food', name: 'Корм для животных', icon: 'paw-outline', productCount: 3200 },
-      { id: 'pet-toys', name: 'Игрушки для животных', icon: 'heart-circle-outline', productCount: 2150 },
-      { id: 'pet-care', name: 'Уход за животными', icon: 'bandage-outline', productCount: 2300 }
+      { id: 'pet-food', name: 'Корм для животных', nameKey: 'MARKETPLACE.CATEGORY.PETS_FOOD', icon: 'paw-outline', productCount: 3200 },
+      { id: 'pet-toys', name: 'Игрушки для животных', nameKey: 'MARKETPLACE.CATEGORY.PETS_TOYS', icon: 'heart-circle-outline', productCount: 2150 },
+      { id: 'pet-care', name: 'Уход за животными', nameKey: 'MARKETPLACE.CATEGORY.PETS_CARE', icon: 'bandage-outline', productCount: 2300 }
     ];
   }
 
