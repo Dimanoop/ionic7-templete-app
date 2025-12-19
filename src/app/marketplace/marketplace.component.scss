@@ -118,6 +118,8 @@
 
 .featured-section {
   padding: 20px;
+  max-width: 1300px;
+  margin: 0 auto;
 
   .section-header {
     display: flex;
@@ -136,6 +138,30 @@
       --padding-end: 0;
     }
   }
+}
+
+/* Fixed-size responsive grid for featured products */
+
+.featured-section ion-grid > ion-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 300px);
+  gap: 16px;
+  justify-content: center;
+  align-content: start;
+}
+
+/* Ensure ion-col becomes grid item with fixed width */
+.featured-section ion-col {
+  width: 300px !important;
+  max-width: 300px !important;
+  min-width: 300px !important;
+  flex: none !important;
+  box-sizing: border-box;
+  padding: 8px !important;
+}
+
+.featured-section .product-card {
+  width: 100% !important;
 }
 
 .product-card {

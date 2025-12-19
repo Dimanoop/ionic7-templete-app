@@ -146,10 +146,37 @@
 // Products Grid
 .products-grid {
   padding: 12px 8px;
+  max-width: 1300px;
+  margin: 0 auto;
 
   ion-grid {
     padding: 0;
   }
+}
+
+/* Use CSS Grid to maintain fixed 300px card width and let number of columns adapt */
+.products-grid ion-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 300px);
+  gap: 16px;
+  justify-content: center;
+  align-content: start;
+}
+
+/* Ensure ion-col doesn't force Ionic widths and becomes a grid item */
+ion-col.product-col,
+.products-grid ion-col.product-col {
+  width: 300px !important;
+  max-width: 300px !important;
+  min-width: 300px !important;
+  flex: none !important;
+  box-sizing: border-box;
+  padding: 8px !important;
+}
+
+.products-grid .product-card {
+  width: 100% !important;
+  height: 100% !important;
 }
 
 .product-col {
