@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonContent } from '@ionic/angular';
 import { MarketplaceService } from './services/marketplace.service';
-import { Product, Category } from './models/marketplace.models';
+import { Product, Category, FilterOptions } from './models/marketplace.models';
 import { TranslateService} from '@ngx-translate/core';
 
 @Component({
@@ -16,6 +16,14 @@ export class MarketplaceComponent implements OnInit {
   Math = Math; // Для использования в шаблоне
   products: Product[] = [];
   filteredProducts: Product[] = [];
+  selectedCategory: Category | null = null;
+  // Filters / sorting
+  sortBy: FilterOptions['sortBy'] = 'popularity';
+  priceRange: { from?: number; to?: number } = {};
+  brands: string[] = [];
+  selectedBrands: string[] = [];
+  minRating?: number;
+  inStockOnly: boolean = false;
   categories: Category[] = [];
   searchQuery: string = '';
   totalProducts: number = 0;
@@ -52,6 +60,7 @@ export class MarketplaceComponent implements OnInit {
   loadCategories() {
     this.categories = this.marketplaceService.getCategories().slice(0, 6);
   }
+
 
   loadProducts() {
     // Загружаем товары из разных категорий для главной страницы
@@ -112,7 +121,75 @@ export class MarketplaceComponent implements OnInit {
   }
 
   selectCategory(category: Category) {
-    this.router.navigate(['/marketplace/products', category.id]);
+    // open sidebar filters on main page instead of navigating immediately
+    this.selectedCategory = category;
+    this.sortBy = 'popularity';
+    this.priceRange = {};
+    this.selectedBrands = [];
+    this.minRating = undefined;
+    this.inStockOnly = false;
+    this.loadProductsForCategory();
+  }
+
+  closeCategorySidebar() {
+    this.selectedCategory = null;
+    // restore main page product list
+    this.filteredProducts = this.products;
+  }
+
+  private loadProductsForCategory() {
+    if (!this.selectedCategory) return;
+    this.marketplaceService.getProductsByCategory(this.selectedCategory.id).subscribe(products => {
+      this.products = products;
+      this.filteredProducts = [...products];
+      this.totalProducts = this.filteredProducts.length;
+      // derive brands
+      this.brands = Array.from(new Set(products.map(p => p.brand).filter(Boolean))) as string[];
+      this.applyFilters();
+    });
+  }
+
+  onSortChange(ev: any) {
+    this.sortBy = ev.detail ? ev.detail.value : ev;
+    this.applyFilters();
+  }
+
+  toggleBrand(brand: string) {
+    const idx = this.selectedBrands.indexOf(brand);
+    if (idx >= 0) this.selectedBrands.splice(idx, 1);
+    else this.selectedBrands.push(brand);
+    this.applyFilters();
+  }
+
+  resetFilters() {
+    this.sortBy = 'popularity';
+    this.priceRange = {};
+    this.selectedBrands = [];
+    this.minRating = undefined;
+    this.inStockOnly = false;
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    if (!this.selectedCategory) return;
+    const filters: any = {};
+    if (this.priceRange.from) filters.priceFrom = Number(this.priceRange.from);
+    if (this.priceRange.to) filters.priceTo = Number(this.priceRange.to);
+    if (this.selectedBrands.length) filters.brands = this.selectedBrands;
+    if (this.minRating) filters.rating = this.minRating;
+    if (this.inStockOnly) filters.inStock = true;
+    if (this.sortBy) filters.sortBy = this.sortBy;
+
+    this.marketplaceService.getProductsByCategory(this.selectedCategory.id, filters).subscribe(products => {
+      let sorted = [...products];
+      // simple client-side sort fallback
+      if (this.sortBy === 'priceLow') sorted.sort((a,b)=>a.price-b.price);
+      if (this.sortBy === 'priceHigh') sorted.sort((a,b)=>b.price-a.price);
+      if (this.sortBy === 'rating') sorted.sort((a,b)=>(b.rating||0)-(a.rating||0));
+      // 'popularity' and 'new' handled by service or left as-is
+      this.filteredProducts = sorted;
+      this.totalProducts = sorted.length;
+    });
   }
 
   viewProductDetails(product: Product) {

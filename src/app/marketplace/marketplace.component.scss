@@ -374,6 +374,80 @@
   }
 }
 
+/* Layout for category + filters sidebar */
+.category-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 12px;
+}
+
+.category-sidebar {
+  background: white;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  /* Make sidebar scrollable and sticky: allows reaching full filters list */
+  position: sticky;
+  top: 80px;
+  max-height: calc(100vh - 100px);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sidebar-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:8px;
+}
+
+.sort-panel {
+  margin-bottom: 12px;
+}
+
+.sort-segment-vertical {
+  display:flex;
+  flex-direction:column;
+}
+
+.sort-select-item ion-select {
+  --padding-start: 6px;
+  --min-width: 160px;
+}
+
+/* Center the displayed select text inside the button */
+.sort-select-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sort-select-item ion-select {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sort-select-item ion-select::part(text) {
+  text-align: center;
+  width: 100%;
+  display: block;
+}
+
+.filters-list .filter-group { margin-bottom:12px; }
+.filters-list .price-inputs ion-input{ width:100%; margin-bottom:6px }
+
+.category-products { padding: 0 8px; }
+
+@media (max-width: 900px) {
+  .category-layout { grid-template-columns: 1fr; }
+  .category-sidebar { position: static; top: auto; }
+}
+
 .load-more-section {
   padding: 20px;
   text-align: center;

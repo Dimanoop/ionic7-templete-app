@@ -50,9 +50,105 @@
       </div>
     </div>
   </div>
+  <!-- If a category is selected, show two-column layout with left filters -->
+  <div *ngIf="selectedCategory" class="category-layout">
+    <aside class="category-sidebar">
+      <div class="sidebar-header">
+        <h3>{{ selectedCategory?.name }}</h3>
+        <ion-button fill="clear" (click)="closeCategorySidebar()">
+          <ion-icon name="close" slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
+
+      <!-- Sorting control displayed as select-like element -->
+      <div class="sort-panel">
+        <h4>Сортировка</h4>
+        <ion-item lines="none" class="sort-select-item">
+          <ion-select [(ngModel)]="sortBy" (ionChange)="applyFilters()" interface="popover">
+            <ion-select-option value="popularity">Популярные</ion-select-option>
+            <ion-select-option value="new">Новинки</ion-select-option>
+            <ion-select-option value="priceLow">Дешевле</ion-select-option>
+            <ion-select-option value="priceHigh">Дороже</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </div>
+
+      <!-- Filters below sorting -->
+      <div class="filters-list">
+        <div class="filter-header-row">
+          <h4>Фильтры</h4>
+          <ion-button fill="clear" (click)="resetFilters()">
+            <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+
+        <div class="filter-group">
+          <h5>Цена</h5>
+          <div class="price-inputs">
+            <ion-input type="number" placeholder="От" [(ngModel)]="priceRange.from" (ionChange)="applyFilters()"></ion-input>
+            <ion-input type="number" placeholder="До" [(ngModel)]="priceRange.to" (ionChange)="applyFilters()"></ion-input>
+          </div>
+        </div>
+
+        <div class="filter-group" *ngIf="brands.length > 0">
+          <h5>Бренд</h5>
+          <div class="brands-list">
+            <ion-item *ngFor="let brand of brands" lines="none">
+              <ion-checkbox slot="start" [checked]="selectedBrands.includes(brand)" (ionChange)="toggleBrand(brand)"></ion-checkbox>
+              <ion-label>{{ brand }}</ion-label>
+            </ion-item>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <h5>Рейтинг</h5>
+          <ion-list lines="none">
+            <ion-item *ngFor="let r of [5,4,3,2,1]">
+              <ion-label>
+                <ng-container *ngFor="let i of [1,2,3,4,5]">
+                  <ion-icon *ngIf="i <= r" name="star" color="warning"></ion-icon>
+                </ng-container>
+              </ion-label>
+              <ion-radio slot="start" [value]="r" (ionChange)="minRating = r; applyFilters()"></ion-radio>
+            </ion-item>
+          </ion-list>
+        </div>
+
+        <div class="filter-group">
+          <ion-item lines="none">
+            <ion-label>Только в наличии</ion-label>
+            <ion-checkbox slot="start" [(ngModel)]="inStockOnly" (ionChange)="applyFilters()"></ion-checkbox>
+          </ion-item>
+        </div>
+
+      </div>
+    </aside>
+
+    <section class="category-products">
+      <div class="section-header">
+        <h2>{{ selectedCategory?.name }}</h2>
+      </div>
+      <ion-grid fixed="true">
+        <ion-row>
+          <ion-col size="12" sizeMd="6" sizeLg="4" *ngFor="let product of filteredProducts; let i = index" [ngClass]="{'full-width': i === 0}">
+            <ion-card class="product-card" (click)="viewProductDetails(product)">
+              <div class="product-image-wrapper">
+                <img [src]="product.image" [alt]="product.title" class="product-image" />
+                <ion-badge *ngIf="product.badge" color="danger" class="badge">{{ product.badge }}</ion-badge>
+              </div>
+              <ion-card-content>
+                <h3 class="product-title">{{ product.title }}</h3>
+                <div class="price-info"><span class="current-price">{{ formatPrice(product.price) }}</span></div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </section>
+  </div>
 
   <!-- Featured Products Section -->
-  <div class="featured-section">
+  <div *ngIf="!selectedCategory" class="featured-section">
     <div class="section-header">
       <h2>{{ 'MARKETPLACE.FEATURED_TITLE' | translate }}</h2>
       <ion-button fill="clear" size="small">{{ 'MARKETPLACE.ALL' | translate }}</ion-button>
