@@ -140,12 +140,18 @@
   }
 }
 
+/* Increase internal ion-grid max width so four 300px columns fit on wide screens */
+.featured-section ion-grid {
+  --ion-grid-width: 1400px;
+}
+
 /* Fixed-size responsive grid for featured products */
 
 .featured-section ion-grid > ion-row {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 300px);
-  gap: 16px;
+  /* Keep strict 300px card size but let grid fit as many columns as possible */
+  grid-template-columns: repeat(auto-fit, 300px);
+  gap: 8px;
   justify-content: center;
   align-content: start;
 }
@@ -157,7 +163,7 @@
   min-width: 300px !important;
   flex: none !important;
   box-sizing: border-box;
-  padding: 8px !important;
+  padding: 6px !important;
 }
 
 .featured-section .product-card {

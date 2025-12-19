@@ -157,8 +157,10 @@
 /* Use CSS Grid to maintain fixed 300px card width and let number of columns adapt */
 .products-grid ion-row {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 300px);
-  gap: 16px;
+  /* Use CSS Grid to maintain fixed 300px card width and let number of columns adapt */
+  /* Keep strict 300px card size but let grid fit as many columns as possible */
+  grid-template-columns: repeat(auto-fit, 300px);
+  gap: 8px;
   justify-content: center;
   align-content: start;
 }
@@ -171,7 +173,7 @@ ion-col.product-col,
   min-width: 300px !important;
   flex: none !important;
   box-sizing: border-box;
-  padding: 8px !important;
+  padding: 6px !important;
 }
 
 .products-grid .product-card {
