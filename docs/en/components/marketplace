@@ -1,0 +1,16 @@
+MarketPlace Application Template
+
+The following has been implemented:
+A web application for searching products on the marketplace, featuring:
+1. Filters to find the desired product (by price, brand, or rating)
+2. A shopping cart, which automatically adds the product when you click "Add to Cart"
+3. The ability to add products to favorites by clicking the heart emoji in the upper right corner of the product
+4. Buttons for individual categories on the homepage
+5. Specifications/Description/Reviews/Required quantity/Color on the selected product page
+
+To-Do list:
+1. Database integration
+2. Layout and UI components
+3. Homepage functionality
+4. Additional pages and functions
+5. Data management (DB/API)
